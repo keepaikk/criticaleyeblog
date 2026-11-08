@@ -1,5 +1,10 @@
 import { Article } from '../types';
 
+// Prefer a build-time override, otherwise follow whatever domain the app is served from.
+const siteUrl =
+  import.meta.env?.VITE_SITE_URL ||
+  (typeof window !== 'undefined' ? window.location.origin : 'https://criticaleye.org');
+
 export function formatNewsDate(isoString: string): string {
   try {
     const d = new Date(isoString);
@@ -37,8 +42,8 @@ export function generateRssFeed(articles: Article[]): string {
       (a) => `
     <item>
       <title><![CDATA[${a.title}]]></title>
-      <link>https://criticaleyenews.org/article/${a.slug}</link>
-      <guid isPermaLink="true">https://criticaleyenews.org/article/${a.slug}</guid>
+      <link>${siteUrl}/article/${a.slug}</link>
+      <guid isPermaLink="true">${siteUrl}/article/${a.slug}</guid>
       <pubDate>${new Date(a.publishedAt).toUTCString()}</pubDate>
       <author>${a.author.name}</author>
       <category><![CDATA[${a.category}]]></category>
@@ -51,11 +56,11 @@ export function generateRssFeed(articles: Article[]): string {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Critical Eye</title>
-    <link>https://criticaleye.org</link>
+    <link>${siteUrl}</link>
     <description>Journalism with Perspective. Reporting with Purpose. Independent Ghanaian and African healthcare journalism.</description>
     <language>en-gh</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <atom:link href="https://criticaleyenews.org/rss.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml" />
     ${items}
   </channel>
 </rss>`;
@@ -63,16 +68,16 @@ export function generateRssFeed(articles: Article[]): string {
 
 export function generateSitemapXml(articles: Article[]): string {
   const staticUrls = [
-    { loc: 'https://criticaleyenews.org/', priority: '1.0', changefreq: 'hourly' },
-    { loc: 'https://criticaleyenews.org/ghana-health', priority: '0.9', changefreq: 'daily' },
-    { loc: 'https://criticaleyenews.org/africa-health', priority: '0.9', changefreq: 'daily' },
-    { loc: 'https://criticaleyenews.org/global-health', priority: '0.8', changefreq: 'daily' },
-    { loc: 'https://criticaleyenews.org/research-innovation', priority: '0.8', changefreq: 'daily' },
-    { loc: 'https://criticaleyenews.org/analysis', priority: '0.8', changefreq: 'daily' },
-    { loc: 'https://criticaleyenews.org/about', priority: '0.6', changefreq: 'monthly' },
-    { loc: 'https://criticaleyenews.org/editorial-policy', priority: '0.5', changefreq: 'monthly' },
-    { loc: 'https://criticaleyenews.org/corrections-policy', priority: '0.5', changefreq: 'monthly' },
-    { loc: 'https://criticaleyenews.org/medical-disclaimer', priority: '0.5', changefreq: 'monthly' },
+    { loc: `${siteUrl}/`, priority: '1.0', changefreq: 'hourly' },
+    { loc: `${siteUrl}/ghana-health`, priority: '0.9', changefreq: 'daily' },
+    { loc: `${siteUrl}/africa-health`, priority: '0.9', changefreq: 'daily' },
+    { loc: `${siteUrl}/global-health`, priority: '0.8', changefreq: 'daily' },
+    { loc: `${siteUrl}/research-innovation`, priority: '0.8', changefreq: 'daily' },
+    { loc: `${siteUrl}/analysis`, priority: '0.8', changefreq: 'daily' },
+    { loc: `${siteUrl}/about`, priority: '0.6', changefreq: 'monthly' },
+    { loc: `${siteUrl}/editorial-policy`, priority: '0.5', changefreq: 'monthly' },
+    { loc: `${siteUrl}/corrections-policy`, priority: '0.5', changefreq: 'monthly' },
+    { loc: `${siteUrl}/medical-disclaimer`, priority: '0.5', changefreq: 'monthly' },
   ];
 
   const articleUrls = articles
@@ -80,7 +85,7 @@ export function generateSitemapXml(articles: Article[]): string {
     .map(
       (a) => `
   <url>
-    <loc>https://criticaleyenews.org/article/${a.slug}</loc>
+      <loc>${siteUrl}/article/${a.slug}</loc>
     <lastmod>${a.updatedAt || a.publishedAt}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
