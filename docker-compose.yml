@@ -1,7 +1,35 @@
 services:
-  blog:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: criticaleye
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: criticaleye
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U criticaleye"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
     build:
       context: .
       args:
-        VITE_ADMIN_PATH: /desk-74f566a7850e
+        VITE_ADMIN_PATH: ${VITE_ADMIN_PATH}
     restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://criticaleye:${DB_PASSWORD}@db:5432/criticaleye
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "80"
+
+volumes:
+  postgres_data:

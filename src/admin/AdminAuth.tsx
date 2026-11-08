@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AlertCircle, Eye, EyeOff, Lock, ShieldCheck, User } from 'lucide-react';
+import { loginApi } from '../utils/api';
 
 interface AdminAuthProps {
   onUnlock: () => void;
@@ -9,27 +10,36 @@ export const AdminAuth: React.FC<AdminAuthProps> = ({ onUnlock }) => {
   const [form, setForm] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setError(''), 4000);
     return () => clearTimeout(timer);
   }, [error]);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setError('');
 
     if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) {
       setError('Enter a valid staff email.');
       return;
     }
-
     if (form.password.length < 8) {
       setError('Password must be at least 8 characters.');
       return;
     }
 
-    // Local preview gate only. Dokploy will replace this with a backend session.
-    onUnlock();
+    setLoading(true);
+    try {
+      const { token } = await loginApi(form.email, form.password);
+      localStorage.setItem('ce_admin_token', token);
+      onUnlock();
+    } catch (err: any) {
+      setError(err.message || 'Login failed. Check credentials and try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -108,10 +118,11 @@ export const AdminAuth: React.FC<AdminAuthProps> = ({ onUnlock }) => {
 
             <button
               type="submit"
-              className="w-full h-11 bg-amber-700 hover:bg-amber-600 text-stone-950 rounded-md text-sm font-bold transition-colors flex items-center justify-center gap-2"
+              disabled={loading}
+              className="w-full h-11 bg-amber-700 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-stone-950 rounded-md text-sm font-bold transition-colors flex items-center justify-center gap-2"
             >
               <Lock className="w-4 h-4" />
-              <span>Unlock Dashboard</span>
+              <span>{loading ? 'Authenticating...' : 'Unlock Dashboard'}</span>
             </button>
           </form>
         </div>

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Article, Author, BrandSettings } from './types';
 import {
-  getStoredArticles,
-  saveStoredArticles,
-  getStoredAuthors,
-  saveStoredAuthors,
+  fetchArticles, fetchAuthors, fetchSettings,
+  saveArticleApi, deleteArticleApi, updateArticlesBulkApi,
+  saveAuthorApi, saveSettingsApi, logoutApi,
+} from './utils/api';
+import {
   getBookmarks,
   toggleBookmark,
   getBrandSettings,
@@ -33,11 +34,13 @@ import { Footer } from './components/Footer';
 import { ArrowLeft, Bookmark, Stethoscope, PenTool, ArrowRight } from 'lucide-react';
 
 export default function App() {
-  const [articles, setArticles] = useState<Article[]>(() => getStoredArticles());
-  const [authors, setAuthors] = useState<Author[]>(() => getStoredAuthors());
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [authors, setAuthors] = useState<Author[]>([]);
   const [bookmarks, setBookmarks] = useState<string[]>(() => getBookmarks());
   const [brandSettings, setBrandSettings] = useState<BrandSettings>(() => getBrandSettings());
   const [isAdminUnlocked, setIsAdminUnlocked] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const adminPath = import.meta.env.VITE_ADMIN_PATH;
 
   // Daytime & Nighttime Theme State
@@ -45,13 +48,10 @@ export default function App() {
   const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>(() => applyTheme(getStoredThemePreference()));
   const [isDaytime, setIsDaytime] = useState<boolean>(() => isDaytimeNow());
 
-  // Sync theme when preference changes or when time transitions between daytime & nighttime
   useEffect(() => {
     const eff = applyTheme(themePreference);
     setEffectiveTheme(eff);
     setIsDaytime(isDaytimeNow());
-
-    // Timer check every 60 seconds for automatic day/night transitions
     const interval = setInterval(() => {
       const currentDaytime = isDaytimeNow();
       setIsDaytime(currentDaytime);
@@ -60,7 +60,6 @@ export default function App() {
         setEffectiveTheme(nextEff);
       }
     }, 60000);
-
     return () => clearInterval(interval);
   }, [themePreference]);
 
@@ -72,6 +71,30 @@ export default function App() {
     });
   };
 
+  // Fetch data from API on mount
+  useEffect(() => {
+    async function load() {
+      try {
+        const [articlesData, authorsData, settingsData] = await Promise.all([
+          fetchArticles(),
+          fetchAuthors(),
+          fetchSettings(),
+        ]);
+        setArticles(articlesData);
+        setAuthors(authorsData);
+        setBrandSettings(settingsData);
+        // Also sync to localStorage for offline resilience
+        saveBrandSettings(settingsData);
+      } catch (err: any) {
+        console.error('Failed to load from API:', err);
+        setLoadError('Could not connect to the editorial database. Showing offline content if available.');
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
   // Navigation state
   const [currentView, setCurrentView] = useState<'home' | 'article' | 'category' | 'page' | 'admin' | 'bookmarks' | 'blog'>('home');
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
@@ -81,54 +104,70 @@ export default function App() {
   // Search modal state
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // Private newsroom route from the build environment. With no VITE_ADMIN_PATH,
-  // no admin route exists in the bundle and /admin style probes find nothing.
+  // Private newsroom route
   useEffect(() => {
     if (adminPath && window.location.pathname === adminPath) {
       setCurrentView('admin');
     }
   }, [adminPath]);
 
-  // Sync articles changes to localStorage
-  const handleSaveArticle = (updatedArticle: Article) => {
-    setArticles((prev) => {
-      const exists = prev.some((a) => a.id === updatedArticle.id);
-      const next = exists
-        ? prev.map((a) => (a.id === updatedArticle.id ? updatedArticle : a))
-        : [updatedArticle, ...prev];
-      saveStoredArticles(next);
-      return next;
-    });
-
-    if (selectedArticle && selectedArticle.id === updatedArticle.id) {
-      setSelectedArticle(updatedArticle);
+  // Persist articles via API
+  const handleSaveArticle = async (updatedArticle: Article) => {
+    try {
+      await saveArticleApi(updatedArticle);
+      setArticles((prev) => {
+        const exists = prev.some((a) => a.id === updatedArticle.id);
+        const next = exists
+          ? prev.map((a) => (a.id === updatedArticle.id ? updatedArticle : a))
+          : [updatedArticle, ...prev];
+        return next;
+      });
+      if (selectedArticle && selectedArticle.id === updatedArticle.id) {
+        setSelectedArticle(updatedArticle);
+      }
+    } catch (err: any) {
+      alert('Save failed: ' + err.message);
     }
   };
 
-  const handleDeleteArticle = (id: string) => {
-    setArticles((prev) => {
-      const next = prev.filter((a) => a.id !== id);
-      saveStoredArticles(next);
-      return next;
-    });
+  const handleDeleteArticle = async (id: string) => {
+    try {
+      await deleteArticleApi(id);
+      setArticles((prev) => prev.filter((a) => a.id !== id));
+    } catch (err: any) {
+      alert('Delete failed: ' + err.message);
+    }
   };
 
-  const handleUpdateAllArticles = (newArticles: Article[]) => {
-    setArticles(newArticles);
-    saveStoredArticles(newArticles);
+  const handleUpdateAllArticles = async (newArticles: Article[]) => {
+    try {
+      await updateArticlesBulkApi(newArticles);
+      setArticles(newArticles);
+    } catch (err: any) {
+      alert('Update failed: ' + err.message);
+    }
   };
 
-  const handleSaveAuthor = (author: Author) => {
-    setAuthors((prev) => {
-      const next = [...prev, author];
-      saveStoredAuthors(next);
-      return next;
-    });
+  const handleSaveAuthor = async (author: Author) => {
+    try {
+      await saveAuthorApi(author);
+      setAuthors((prev) => {
+        const exists = prev.some((a) => a.id === author.id);
+        return exists ? prev.map((a) => (a.id === author.id ? author : a)) : [...prev, author];
+      });
+    } catch (err: any) {
+      alert('Save author failed: ' + err.message);
+    }
   };
 
-  const handleSaveBrandSettings = (newSettings: BrandSettings) => {
-    setBrandSettings(newSettings);
-    saveBrandSettings(newSettings);
+  const handleSaveBrandSettings = async (newSettings: BrandSettings) => {
+    try {
+      await saveSettingsApi(newSettings);
+      setBrandSettings(newSettings);
+      saveBrandSettings(newSettings);
+    } catch (err: any) {
+      alert('Save settings failed: ' + err.message);
+    }
   };
 
   const handleToggleBookmarkArticle = (articleId: string) => {
@@ -192,36 +231,40 @@ export default function App() {
   // Featured lead story
   const featuredArticle = publishedArticles.find((a) => a.featured) || publishedArticles[0];
 
-  // Specific thematic slices for the homepage editorial order
+  // Category slices
   const ghanaHealthArticles = publishedArticles.filter(
     (a) => a.category === 'Ghana Health' || a.category === 'Hospitals & Healthcare'
   );
-
   const publicHealthArticles = publishedArticles.filter(
     (a) => a.category === 'Public Health' || a.category === 'Maternal & Child Health' || a.category === 'Medicines & Pharmaceuticals'
   );
-
   const policyArticles = publishedArticles.filter(
     (a) => a.category === 'Healthcare Policy' || a.category === 'Ghana Health'
   );
-
   const researchAndInnovationArticles = publishedArticles.filter(
     (a) => a.category === 'Medical Research' || a.category === 'Health Technology'
   );
-
   const africaAndGlobalArticles = publishedArticles.filter(
     (a) => a.category === 'Africa Health' || a.category === 'Global Health'
   );
-
   const analysisAndInvestigations = publishedArticles.filter(
     (a) => a.articleType === 'Analysis' || a.articleType === 'Investigation'
   );
-
   const blogArticles = publishedArticles.filter(
     (a) => a.isBlogPost || a.articleType === 'Opinion' || Boolean(a.blogSeries)
   );
-
   const bookmarkedArticles = publishedArticles.filter((a) => bookmarks.includes(a.id));
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-stone-50 text-stone-600">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-amber-700 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-sm font-medium">Loading Critical Eye...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 selection:bg-amber-100 dark:selection:bg-amber-950 selection:text-amber-900 dark:selection:text-amber-200 transition-colors">
@@ -233,7 +276,14 @@ export default function App() {
         onSelectArticle={handleSelectArticle}
       />
 
-      {/* Primary Header with dedicated Logo, Brand Banner, and Day/Night Theme space */}
+      {/* Error banner */}
+      {loadError && currentView !== 'admin' && (
+        <div className="bg-amber-100 text-amber-900 text-xs font-medium px-4 py-2 text-center border-b border-amber-200">
+          {loadError}
+        </div>
+      )}
+
+      {/* Primary Header */}
       {currentView !== 'admin' && (
         <Header
           currentView={currentView}
@@ -265,7 +315,11 @@ export default function App() {
             onDeleteArticle={handleDeleteArticle}
             onUpdateArticles={handleUpdateAllArticles}
             onSaveAuthor={handleSaveAuthor}
-            onExitAdmin={() => handleNavigate('home')}
+            onExitAdmin={() => {
+              logoutApi();
+              setIsAdminUnlocked(false);
+              handleNavigate('home');
+            }}
             onPreviewArticle={(art) => {
               setSelectedArticle(art);
               setCurrentView('article');
@@ -273,7 +327,7 @@ export default function App() {
           />
         )}
 
-        {/* VIEW 2: ARTICLE DETAIL READING VIEW */}
+        {/* VIEW 2: ARTICLE DETAIL */}
         {currentView === 'article' && selectedArticle && (
           <ArticleDetail
             article={selectedArticle}
@@ -285,7 +339,7 @@ export default function App() {
           />
         )}
 
-        {/* VIEW 3: CATEGORY BROWSING VIEW */}
+        {/* VIEW 3: CATEGORY */}
         {currentView === 'category' && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
             <div className="border-b border-stone-200 dark:border-stone-800 pb-4 mb-8">
@@ -307,7 +361,6 @@ export default function App() {
               </p>
             </div>
 
-            {/* Articles in this Category */}
             {(() => {
               const categoryItems = publishedArticles.filter(
                 (a) =>
@@ -342,7 +395,7 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW 4: BOOKMARKS / SAVED READING LIST */}
+        {/* VIEW 4: BOOKMARKS */}
         {currentView === 'bookmarks' && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
             <div className="border-b border-stone-200 dark:border-stone-800 pb-4 mb-8 flex items-center justify-between">
@@ -388,7 +441,7 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW 5: STATIC PAGES (About, Policy, Disclaimer, Contact, etc.) */}
+        {/* VIEW 5: STATIC PAGES */}
         {currentView === 'page' && (
           <StaticPages
             pageId={selectedPage}
@@ -397,7 +450,7 @@ export default function App() {
           />
         )}
 
-        {/* VIEW: HEALTHCARE BLOG HUB */}
+        {/* VIEW: BLOG HUB */}
         {currentView === 'blog' && (
           <BlogHub
             articles={publishedArticles}
@@ -408,10 +461,9 @@ export default function App() {
           />
         )}
 
-        {/* VIEW 6: HOMEPAGE (Editorial Layout Order) */}
+        {/* VIEW 6: HOMEPAGE */}
         {currentView === 'home' && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-            {/* 1. FEATURED STORY (Lead Salience Tier) */}
             {featuredArticle && (
               <FeaturedLead
                 article={featuredArticle}
@@ -421,13 +473,11 @@ export default function App() {
               />
             )}
 
-            {/* 2. LATEST NEWS WIRE */}
             <LatestNewsRail
               articles={publishedArticles}
               onSelect={handleSelectArticle}
             />
 
-            {/* 3. GHANA HEALTH */}
             <section className="mb-14">
               <SectionHeader
                 number="03"
@@ -448,7 +498,6 @@ export default function App() {
               </div>
             </section>
 
-            {/* 4. PUBLIC HEALTH */}
             <section className="mb-14">
               <SectionHeader
                 number="04"
@@ -482,7 +531,6 @@ export default function App() {
               </div>
             </section>
 
-            {/* 5. HEALTHCARE & POLICY */}
             <section className="mb-14">
               <SectionHeader
                 number="05"
@@ -504,7 +552,6 @@ export default function App() {
               </div>
             </section>
 
-            {/* HEALTHCARE BLOG & PERSPECTIVES SHOWCASE */}
             <section className="mb-14 bg-amber-50/50 dark:bg-stone-900/60 border border-amber-200/80 dark:border-stone-800 rounded-lg p-6 sm:p-8">
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-amber-200/70 dark:border-stone-800 mb-6">
                 <div>
@@ -519,7 +566,6 @@ export default function App() {
                     First-hand insights from Ghanaian doctors, rural midwives, pharmacists, and health policy advocates.
                   </p>
                 </div>
-
                 <div className="flex items-center gap-3 shrink-0">
                   <button
                     onClick={() => handleNavigate('blog')}
@@ -574,7 +620,6 @@ export default function App() {
               </div>
             </section>
 
-            {/* 6. RESEARCH & CLINICAL INNOVATION */}
             <section className="mb-14">
               <SectionHeader
                 number="06"
@@ -595,7 +640,6 @@ export default function App() {
               </div>
             </section>
 
-            {/* 7. AFRICA & GLOBAL HEALTH */}
             <section className="mb-14">
               <SectionHeader
                 number="07"
@@ -617,7 +661,6 @@ export default function App() {
               </div>
             </section>
 
-            {/* 8. ANALYSIS & INVESTIGATIONS */}
             <section className="mb-14">
               <SectionHeader
                 number="08"
@@ -638,13 +681,11 @@ export default function App() {
               </div>
             </section>
 
-            {/* 9. NEWSLETTER SUBSCRIPTION */}
             <NewsletterSection />
           </div>
         )}
       </main>
 
-      {/* Primary Footer */}
       {currentView !== 'admin' && (
         <Footer
           onNavigatePage={(pId) => handleNavigate('page', pId)}
