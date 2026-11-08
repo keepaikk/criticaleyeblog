@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { initDb } from './db.js';
 import { seedDatabase } from './seed.js';
 import { initAdminUser } from './routes/auth.js';
@@ -19,6 +19,12 @@ const APP_URL = process.env.APP_URL || '';
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
+// Request logging for debug
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
+
 // API routes
 app.use('/api/articles', articlesRouter);
 app.use('/api/authors', authorsRouter);
@@ -30,23 +36,25 @@ app.get('/health', (req, res) => {
   res.type('text/plain').send('ok\n');
 });
 
-// Static files (built SPA + images)
-app.use(express.static(path.join(__dirname, '../dist')));
+// Static files (images, assets) — do NOT serve index.html here
+app.use(express.static(path.join(__dirname, '../dist'), { index: false }));
 
-// Read index.html template once and inject APP_URL
-let htmlTemplate;
-try {
-  htmlTemplate = readFileSync(path.join(__dirname, '../dist/index.html'), 'utf-8');
-} catch (err) {
-  console.error('Could not read dist/index.html:', err.message);
-  htmlTemplate = '<!doctype html><html><body>Build not found</body></html>';
+// Read and template index.html
+const indexPath = path.join(__dirname, '../dist/index.html');
+let renderedHtml;
+
+if (existsSync(indexPath)) {
+  const htmlTemplate = readFileSync(indexPath, 'utf-8');
+  renderedHtml = APP_URL
+    ? htmlTemplate.replace(/\{\{APP_URL\}\}/g, APP_URL)
+    : htmlTemplate;
+  console.log('index.html loaded and templated');
+} else {
+  console.error('CRITICAL: dist/index.html not found at', indexPath);
+  renderedHtml = '<!doctype html><html><body>Build not found</body></html>';
 }
 
-const renderedHtml = APP_URL
-  ? htmlTemplate.replace(/\{\{APP_URL\}\}/g, APP_URL)
-  : htmlTemplate;
-
-// SPA catch-all — serve injected HTML
+// SPA catch-all — serve injected HTML for ALL non-API, non-static routes
 app.get('*', (req, res) => {
   res.send(renderedHtml);
 });
@@ -56,9 +64,9 @@ async function start() {
     await initDb();
     await seedDatabase();
     await initAdminUser();
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-      console.log(`APP_URL: ${APP_URL || '(not set — SEO tags will have empty URLs)'}`);
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on http://0.0.0.0:${PORT}`);
+      console.log(`APP_URL: ${APP_URL || '(not set)'}`);
     });
   } catch (err) {
     console.error('Failed to start server:', err);
