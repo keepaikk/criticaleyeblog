@@ -22,6 +22,7 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: postgres://criticaleye:${DB_PASSWORD}@db:5432/criticaleye
+      APP_URL: ${APP_URL}
       JWT_SECRET: ${JWT_SECRET}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
