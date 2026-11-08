@@ -1,4 +1,7 @@
 services:
   blog:
-    build: .
+    build:
+      context: .
+      args:
+        VITE_ADMIN_PATH: /desk-74f566a7850e
     restart: unless-stopped
