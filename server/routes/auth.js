@@ -5,7 +5,7 @@ import { generateToken } from '../middleware/auth.js';
 
 const router = Router();
 
-// Initialize admin user on first startup
+// Initialize or update admin user on every startup
 export async function initAdminUser() {
   const email = process.env.ADMIN_EMAIL;
   const password = process.env.ADMIN_PASSWORD;
@@ -14,10 +14,14 @@ export async function initAdminUser() {
     return;
   }
   const existing = await query('SELECT * FROM users WHERE email = $1', [email]);
+  const hash = await bcrypt.hash(password, 12);
+
   if (existing.rows.length === 0) {
-    const hash = await bcrypt.hash(password, 12);
     await query('INSERT INTO users (email, password_hash) VALUES ($1, $2)', [email, hash]);
     console.log('Admin user created:', email);
+  } else {
+    await query('UPDATE users SET password_hash = $1 WHERE email = $2', [hash, email]);
+    console.log('Admin password updated:', email);
   }
 }
 
