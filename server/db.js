@@ -1,9 +1,13 @@
 import pg from 'pg';
 const { Pool } = pg;
 
+// SSL is off by default (internal Docker network is private and secure).
+// Set DB_SSL=true if using an external/managed Postgres that requires TLS.
+const useSsl = process.env.DB_SSL === 'true';
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: useSsl ? { rejectUnauthorized: false } : false,
 });
 
 export async function initDb() {
