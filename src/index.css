@@ -1,0 +1,84 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: #1c1917;
+    background-color: #fafaf9;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  html.dark body {
+    color: #f5f5f4;
+    background-color: #0c0a09;
+  }
+
+  .font-editorial-serif {
+    font-family: var(--font-serif);
+  }
+
+  .font-editorial-sans {
+    font-family: var(--font-sans);
+  }
+}
+
+/* Custom editorial reading drop caps */
+.editorial-dropcap::first-letter {
+  font-family: var(--font-serif);
+  float: left;
+  font-size: 3.5rem;
+  line-height: 0.85;
+  font-weight: 700;
+  margin-right: 0.65rem;
+  margin-top: 0.2rem;
+  color: #0f172a;
+}
+
+html.dark .editorial-dropcap::first-letter {
+  color: #f59e0b;
+}
+
+/* Smooth reading line height */
+.prose-editorial p {
+  margin-bottom: 1.35rem;
+  line-height: 1.78;
+  color: #292524;
+}
+
+html.dark .prose-editorial p {
+  color: #d6d3d1;
+}
+
+.prose-editorial h2 {
+  font-family: var(--font-serif);
+  font-size: 1.65rem;
+  font-weight: 700;
+  margin-top: 2.25rem;
+  margin-bottom: 0.85rem;
+  color: #0c0a09;
+  line-height: 1.25;
+}
+
+html.dark .prose-editorial h2 {
+  color: #fafaf9;
+}
+
+.prose-editorial h3 {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin-top: 1.75rem;
+  margin-bottom: 0.65rem;
+  color: #1c1917;
+  line-height: 1.3;
+}
+
+html.dark .prose-editorial h3 {
+  color: #f5f5f4;
+}

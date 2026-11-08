@@ -1,0 +1,6 @@
+{
+  "name": "Critical Eye News",
+  "description": "Journalism with Perspective. Reporting with Purpose. Leading healthcare journalism and analysis covering Ghana, Africa, and global health developments.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
