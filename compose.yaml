@@ -1,0 +1,4 @@
+services:
+  test:
+    build: .
+    restart: unless-stopped
