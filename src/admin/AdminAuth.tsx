@@ -25,10 +25,6 @@ export const AdminAuth: React.FC<AdminAuthProps> = ({ onUnlock }) => {
       setError('Enter a valid staff email.');
       return;
     }
-    if (form.password.length < 8) {
-      setError('Password must be at least 8 characters.');
-      return;
-    }
 
     setLoading(true);
     try {
@@ -91,17 +87,14 @@ export const AdminAuth: React.FC<AdminAuthProps> = ({ onUnlock }) => {
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   required
-                  minLength={8}
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  placeholder="********"
+                  placeholder="Enter password"
                   className="w-full h-11 pl-10 pr-11 rounded-md border border-stone-700 focus:border-amber-600 focus:outline-none bg-stone-950 text-stone-100 text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  title={showPassword ? 'Hide password' : 'Show password'}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

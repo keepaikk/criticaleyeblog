@@ -5,12 +5,15 @@ import { generateToken } from '../middleware/auth.js';
 
 const router = Router();
 
-// Initialize or update admin user on every startup
+// Simple login password — override via env for security, defaults to 'criticaleye'
+const SIMPLE_PASSWORD = process.env.SIMPLE_ADMIN_PASSWORD || 'criticaleye';
+
+// Initialize admin user on first startup (legacy bcrypt path, still works)
 export async function initAdminUser() {
   const email = process.env.ADMIN_EMAIL;
   const password = process.env.ADMIN_PASSWORD;
   if (!email || !password) {
-    console.warn('ADMIN_EMAIL or ADMIN_PASSWORD not set. CMS login disabled.');
+    console.warn('ADMIN_EMAIL or ADMIN_PASSWORD not set. Using simple login only.');
     return;
   }
   const existing = await query('SELECT * FROM users WHERE email = $1', [email]);
@@ -30,6 +33,14 @@ router.post('/login', async (req, res) => {
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password required' });
   }
+
+  // SIMPLE LOGIN: if password matches SIMPLE_ADMIN_PASSWORD, accept any email
+  if (password === SIMPLE_PASSWORD) {
+    const token = generateToken({ email: email || 'admin', role: 'admin' });
+    return res.json({ token, user: { email: email || 'admin', role: 'admin' } });
+  }
+
+  // FALLBACK: check against bcrypt-hashed user in database
   const result = await query('SELECT * FROM users WHERE email = $1', [email]);
   if (result.rows.length === 0) {
     return res.status(401).json({ error: 'Invalid credentials' });
