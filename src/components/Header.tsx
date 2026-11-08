@@ -144,21 +144,18 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Official Brand Banner Artwork Slot */}
           {brandSettings.showBanner && (
-            <div className="w-full lg:max-w-xl xl:max-w-2xl shrink-0">
+            <div className="w-full lg:max-w-lg xl:max-w-xl shrink-0">
               <div
                 onClick={() => handleNavClick('home')}
                 className="relative cursor-pointer group overflow-hidden rounded border border-stone-300/80 dark:border-stone-800 shadow-xs hover:border-amber-800 dark:hover:border-amber-500 transition-all bg-stone-900"
               >
-                <div className="relative aspect-[1024/280] overflow-hidden">
+                <div className="relative aspect-[1024/180] overflow-hidden">
                   <img
                     src={brandSettings.bannerUrl}
                     alt="Critical Eye Blog Official Banner"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover object-center"
                   />
-                </div>
-                <div className="absolute bottom-1 right-2 bg-stone-950/70 backdrop-blur-xs px-2 py-0.5 rounded text-[9px] text-stone-300 font-mono">
-                  Official Blog Banner
                 </div>
               </div>
             </div>
