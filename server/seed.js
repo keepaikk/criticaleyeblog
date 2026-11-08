@@ -48,7 +48,7 @@ export async function seedDatabase() {
   await query(`INSERT INTO brand_settings (id, logo_url, banner_url, tagline, show_banner)
     VALUES (1, $1, $2, $3, $4) ON CONFLICT (id) DO NOTHING`, [
     '/images/critical_eye_facebook_profile.jpg',
-    '/images/critical_eye_banner_wide.jpg',
+    '/images/critical eye real banner 2.png',
     'Journalism with Perspective. Reporting with Purpose.',
     true,
   ]);

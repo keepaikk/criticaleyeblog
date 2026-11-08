@@ -30,7 +30,7 @@ export function toggleBookmark(articleId: string): string[] {
 // Brand settings fallback (will be overridden by API when available)
 export const DEFAULT_BRAND_SETTINGS = {
   logoUrl: '/images/critical_eye_facebook_profile.jpg',
-  bannerUrl: '/images/critical_eye_banner_wide.jpg',
+  bannerUrl: '/images/critical eye real banner 2.png',
   tagline: 'Journalism with Perspective. Reporting with Purpose.',
   showBanner: true,
 };
