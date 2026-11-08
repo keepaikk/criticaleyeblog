@@ -84,32 +84,32 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({
   // Media Library presets
   const mediaLibrary = [
     {
-      url: '/src/assets/images/featured_ghana_hospital_1793829875799.jpg',
+      url: '/images/featured_ghana_hospital_1793829875799.jpg',
       title: 'Accra Teaching Hospital Surgical & Renal Ward',
       category: 'Hospitals & Healthcare',
     },
     {
-      url: '/src/assets/images/public_health_malaria_lab_1793829876940.jpg',
+      url: '/images/public_health_malaria_lab_1793829876940.jpg',
       title: 'Noguchi Memorial Institute Antigen Laboratory',
       category: 'Medical Research',
     },
     {
-      url: '/src/assets/images/rural_drone_delivery_health_1793829876949.jpg',
+      url: '/images/rural_drone_delivery_health_1793829876949.jpg',
       title: 'Zipline Drone Emergency Antivenom Delivery Clinic',
       category: 'Health Technology',
     },
     {
-      url: '/src/assets/images/maternal_health_clinic_1793829877957.jpg',
+      url: '/images/maternal_health_clinic_1793829877957.jpg',
       title: 'Rural Maternal and Newborn CHPS Healthcare Clinic',
       category: 'Maternal & Child Health',
     },
     {
-      url: '/src/assets/images/doctor_clinical_journal_1794072083085.jpg',
+      url: '/images/doctor_clinical_journal_1794072083085.jpg',
       title: 'Ghanaian Physician Writing Clinical Journal & Case Notes',
       category: 'Clinician Perspectives & Healthcare Blog',
     },
     {
-      url: '/src/assets/images/midwife_field_notes_1794072095489.jpg',
+      url: '/images/midwife_field_notes_1794072095489.jpg',
       title: 'Community Nurse-Midwife Holding CHPS Compound Clinic Records',
       category: 'Field Dispatches & Maternal Health',
     },
@@ -1264,7 +1264,7 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({
                     type="text"
                     value={brandForm.logoUrl}
                     onChange={(e) => setBrandForm({ ...brandForm, logoUrl: e.target.value })}
-                    placeholder="/src/assets/images/... or https://..."
+                    placeholder="/images/... or https://..."
                     className="w-full p-2 border border-stone-300 rounded text-xs font-mono focus:outline-none focus:border-amber-800"
                   />
                 </div>
@@ -1343,7 +1343,7 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({
                     type="text"
                     value={brandForm.bannerUrl}
                     onChange={(e) => setBrandForm({ ...brandForm, bannerUrl: e.target.value })}
-                    placeholder="/src/assets/images/... or https://..."
+                    placeholder="/images/... or https://..."
                     className="w-full p-2 border border-stone-300 rounded text-xs font-mono focus:outline-none focus:border-amber-800"
                   />
                 </div>

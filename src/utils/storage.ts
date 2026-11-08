@@ -88,8 +88,8 @@ export function toggleBookmark(articleId: string): string[] {
 const BRAND_SETTINGS_KEY = 'critical_eye_blog_brand_v2';
 
 export const DEFAULT_BRAND_SETTINGS = {
-  logoUrl: '/src/assets/images/critical_eye_facebook_profile.jpg',
-  bannerUrl: '/src/assets/images/critical_eye_banner_wide.jpg',
+  logoUrl: '/images/critical_eye_facebook_profile.jpg',
+  bannerUrl: '/images/critical_eye_banner_wide.jpg',
   tagline: 'Journalism with Perspective. Reporting with Purpose.',
   showBanner: true,
 };

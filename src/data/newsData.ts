@@ -82,7 +82,7 @@ export const INITIAL_ARTICLES: Article[] = [
     },
     publishedAt: '2026-11-04T07:30:00Z',
     readTime: '6 min read',
-    imageUrl: '/src/assets/images/featured_ghana_hospital_1793829875799.jpg',
+    imageUrl: '/images/featured_ghana_hospital_1793829875799.jpg',
     imageCaption: 'Clinicians and senior nursing officers inspect upgraded renal dialysis monitoring equipment at Korle Bu Teaching Hospital.',
     imageCredit: 'Critical Eye / Samuel Ofori',
     keyTakeaways: [
@@ -132,7 +132,7 @@ export const INITIAL_ARTICLES: Article[] = [
     },
     publishedAt: '2026-11-03T14:15:00Z',
     readTime: '5 min read',
-    imageUrl: '/src/assets/images/public_health_malaria_lab_1793829876940.jpg',
+    imageUrl: '/images/public_health_malaria_lab_1793829876940.jpg',
     imageCaption: 'Lead researcher at the Noguchi Memorial Institute for Medical Research in Legon conducting microscopic antigen assay evaluation.',
     imageCredit: 'NMIMR / Critical Eye',
     keyTakeaways: [
@@ -174,7 +174,7 @@ export const INITIAL_ARTICLES: Article[] = [
     },
     publishedAt: '2026-11-02T09:40:00Z',
     readTime: '4 min read',
-    imageUrl: '/src/assets/images/rural_drone_delivery_health_1793829876949.jpg',
+    imageUrl: '/images/rural_drone_delivery_health_1793829876949.jpg',
     imageCaption: 'A community health nurse receives an insulated temperature-regulated vaccine and antivenom payload at the Asante-Akim Health Centre.',
     imageCredit: 'Critical Eye / Kwabena Mensah',
     keyTakeaways: [
@@ -210,7 +210,7 @@ export const INITIAL_ARTICLES: Article[] = [
     },
     publishedAt: '2026-11-01T16:00:00Z',
     readTime: '5 min read',
-    imageUrl: '/src/assets/images/maternal_health_clinic_1793829877957.jpg',
+    imageUrl: '/images/maternal_health_clinic_1793829877957.jpg',
     imageCaption: 'A community midwife weighs an infant during a routine antenatal and child wellness clinic in a rural district facility.',
     imageCredit: 'Critical Eye / Grace Asiedu',
     keyTakeaways: [
@@ -247,7 +247,7 @@ export const INITIAL_ARTICLES: Article[] = [
     },
     publishedAt: '2026-10-31T08:20:00Z',
     readTime: '7 min read',
-    imageUrl: '/src/assets/images/featured_ghana_hospital_1793829875799.jpg',
+    imageUrl: '/images/featured_ghana_hospital_1793829875799.jpg',
     imageCaption: 'Ghana Food and Drugs Authority quality verification laboratory technicians testing active pharmaceutical ingredients.',
     imageCredit: 'FDA Ghana / Critical Eye',
     keyTakeaways: [
@@ -288,7 +288,7 @@ export const INITIAL_ARTICLES: Article[] = [
     },
     publishedAt: '2026-10-29T11:00:00Z',
     readTime: '6 min read',
-    imageUrl: '/src/assets/images/public_health_malaria_lab_1793829876940.jpg',
+    imageUrl: '/images/public_health_malaria_lab_1793829876940.jpg',
     imageCaption: 'Epidemiologists from Ghana, Nigeria, and Côte d’Ivoire review real-time regional genomic sequencing dashboards during the Accra summit.',
     imageCredit: 'Africa CDC Communications',
     keyTakeaways: [
@@ -325,7 +325,7 @@ export const INITIAL_ARTICLES: Article[] = [
     },
     publishedAt: '2026-10-27T10:15:00Z',
     readTime: '5 min read',
-    imageUrl: '/src/assets/images/featured_ghana_hospital_1793829875799.jpg',
+    imageUrl: '/images/featured_ghana_hospital_1793829875799.jpg',
     imageCaption: 'Counseling suite at the Suntreso General Hospital in Kumasi, where routine mental health screenings are integrated into general consultations.',
     imageCredit: 'Critical Eye / Kwame Asante',
     keyTakeaways: [
@@ -361,7 +361,7 @@ export const INITIAL_ARTICLES: Article[] = [
     },
     publishedAt: '2026-10-25T13:45:00Z',
     readTime: '6 min read',
-    imageUrl: '/src/assets/images/public_health_malaria_lab_1793829876940.jpg',
+    imageUrl: '/images/public_health_malaria_lab_1793829876940.jpg',
     imageCaption: 'Delegation of African health diplomats review draft provisions on intellectual property waivers during plenary sessions in Geneva.',
     imageCredit: 'WHO Media Center',
     keyTakeaways: [
@@ -399,7 +399,7 @@ export const INITIAL_ARTICLES: Article[] = [
     },
     publishedAt: '2026-11-06T19:30:00Z',
     readTime: '5 min read',
-    imageUrl: '/src/assets/images/doctor_clinical_journal_1794072083085.jpg',
+    imageUrl: '/images/doctor_clinical_journal_1794072083085.jpg',
     imageCaption: 'Dr. Ansah-Sarpong reviewing ward logs and patient clinical notes at Korle Bu Teaching Hospital.',
     imageCredit: 'Critical Eye / Samuel Ofori',
     keyTakeaways: [
@@ -441,7 +441,7 @@ export const INITIAL_ARTICLES: Article[] = [
     },
     publishedAt: '2026-11-05T14:10:00Z',
     readTime: '6 min read',
-    imageUrl: '/src/assets/images/midwife_field_notes_1794072095489.jpg',
+    imageUrl: '/images/midwife_field_notes_1794072095489.jpg',
     imageCaption: 'Midwife Comfort Tetteh outside the solar-powered Nyamekye Community CHPS compound in the Afram Plains.',
     imageCredit: 'Critical Eye / Grace Asiedu',
     keyTakeaways: [
@@ -483,7 +483,7 @@ export const INITIAL_ARTICLES: Article[] = [
     },
     publishedAt: '2026-11-04T12:00:00Z',
     readTime: '5 min read',
-    imageUrl: '/src/assets/images/public_health_malaria_lab_1793829876940.jpg',
+    imageUrl: '/images/public_health_malaria_lab_1793829876940.jpg',
     imageCaption: 'Chromatographic spectrometer verifying chemical purity of antimalarial tablets collected during market surveillance.',
     imageCredit: 'FDA Ghana / Critical Eye',
     keyTakeaways: [
@@ -525,7 +525,7 @@ export const INITIAL_ARTICLES: Article[] = [
     },
     publishedAt: '2026-11-03T18:20:00Z',
     readTime: '6 min read',
-    imageUrl: '/src/assets/images/featured_ghana_hospital_1793829875799.jpg',
+    imageUrl: '/images/featured_ghana_hospital_1793829875799.jpg',
     imageCaption: 'Patients and clinical nephrologists at the newly commissioned Ho Teaching Hospital renal care unit.',
     imageCredit: 'Critical Eye / Samuel Ofori',
     keyTakeaways: [
@@ -568,7 +568,7 @@ export const INITIAL_ARTICLES: Article[] = [
     },
     publishedAt: '2026-11-02T16:45:00Z',
     readTime: '5 min read',
-    imageUrl: '/src/assets/images/rural_drone_delivery_health_1793829876949.jpg',
+    imageUrl: '/images/rural_drone_delivery_health_1793829876949.jpg',
     imageCaption: 'A solar-backed medical supply refrigeration bay in the Eastern Region demonstrating essential hybrid logistics.',
     imageCredit: 'Critical Eye / Kwabena Mensah',
     keyTakeaways: [
