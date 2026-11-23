@@ -10,6 +10,7 @@ import articlesRouter from './routes/articles.js';
 import authorsRouter from './routes/authors.js';
 import settingsRouter from './routes/settings.js';
 import authRouter from './routes/auth.js';
+import publishRouter from './routes/publish.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -17,13 +18,20 @@ const PORT = process.env.PORT || 80;
 const APP_URL = process.env.APP_URL || '';
 
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
 
 // Request logging for debug
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();
 });
+
+// The publishing route authenticates before parsing its smaller request body.
+app.use('/api/publish', publishRouter, (error, req, res, next) => {
+  if (error.type === 'entity.too.large') return res.status(413).json({ error: 'Article payload is too large' });
+  if (error.type === 'entity.parse.failed') return res.status(400).json({ error: 'Invalid JSON' });
+  next(error);
+});
+app.use(express.json({ limit: '10mb' }));
 
 // API routes
 app.use('/api/articles', articlesRouter);

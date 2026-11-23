@@ -1,3 +1,4 @@
+import { EDITORIAL_PHOTO_LIBRARY } from '../data/editorialPhotos';
 import React, { useState } from 'react';
 import { Article, ArticleStatus, ArticleType, Category, Author, CorrectionRecord, BrandSettings } from '../types';
 import { CATEGORIES } from '../data/newsData';
@@ -113,6 +114,11 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({
       title: 'Community Nurse-Midwife Holding CHPS Compound Clinic Records',
       category: 'Field Dispatches & Maternal Health',
     },
+    ...EDITORIAL_PHOTO_LIBRARY.map((photo) => ({
+      url: photo.imageUrl,
+      title: photo.imageCaption,
+      category: photo.category,
+    })),
   ];
 
   // Helper to start creating a new article
@@ -908,7 +914,14 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({
                 {mediaLibrary.map((item) => (
                   <div
                     key={item.url}
-                    onClick={() => setEditingArticle({ ...editingArticle, imageUrl: item.url })}
+                    onClick={() => {
+                      const photo = EDITORIAL_PHOTO_LIBRARY.find((entry) => entry.imageUrl === item.url);
+                      setEditingArticle({
+                        ...editingArticle,
+                        imageUrl: item.url,
+                        ...(photo && { imageCaption: photo.imageCaption, imageCredit: photo.imageCredit }),
+                      });
+                    }}
                     className={`cursor-pointer border-2 rounded overflow-hidden transition-all ${
                       editingArticle.imageUrl === item.url
                         ? 'border-amber-800 ring-2 ring-amber-800/20'

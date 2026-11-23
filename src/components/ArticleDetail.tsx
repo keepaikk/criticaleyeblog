@@ -1,3 +1,4 @@
+import { EDITORIAL_PHOTO_LIBRARY } from '../data/editorialPhotos';
 import React, { useState, useEffect } from 'react';
 import { Article, GENERAL_CATEGORIES } from '../types';
 import { formatNewsDate } from '../utils/formatters';
@@ -35,6 +36,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
   isBookmarked,
   onToggleBookmark,
 }) => {
+  const editorialPhoto = EDITORIAL_PHOTO_LIBRARY.find((photo) => photo.imageUrl === article.imageUrl);
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'xlarge'>('normal');
   const [copied, setCopied] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
@@ -273,10 +275,17 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
               className="w-full h-full object-cover"
             />
           </div>
-          {(article.imageCaption || article.imageCredit) && (
+          {(article.imageCaption || article.imageCredit || editorialPhoto) && (
             <figcaption className="mt-2 text-xs text-stone-500 dark:text-stone-400 font-serif italic flex flex-col sm:flex-row sm:items-center justify-between gap-1">
               <span>{article.imageCaption}</span>
-              {article.imageCredit && (
+              {editorialPhoto ? (
+                <span className="not-italic font-sans">
+                  Photo by <a className="underline" href={editorialPhoto.source}>{editorialPhoto.imageCredit}</a>
+                  {' · '}
+                  <a className="underline" href={editorialPhoto.licenseUrl}>{editorialPhoto.license}</a>
+                  {' · Resized'}
+                </span>
+              ) : article.imageCredit && (
                 <span className="not-italic text-stone-400 dark:text-stone-500 font-sans font-medium shrink-0">
                   Photo: {article.imageCredit}
                 </span>

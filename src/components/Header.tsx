@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Search, Menu, X, Bookmark, Sun, Moon, Sparkles } from 'lucide-react';
+import { Search, Menu, X, Bookmark, Sun, Moon, Sparkles, ChevronDown } from 'lucide-react';
 import { BrandSettings, GENERAL_CATEGORIES } from '../types';
 import { ThemePreference } from '../utils/theme';
+
+const HEALTH_SECTIONS = ['Ghana Health', 'Africa Health', 'Global Health'];
 
 interface HeaderProps {
   currentView: string;
@@ -33,9 +35,7 @@ export const Header: React.FC<HeaderProps> = ({
   const navLinks = [
     { label: 'Home', view: 'home' },
     ...GENERAL_CATEGORIES.map((category) => ({ label: category, view: 'category', param: category })),
-    { label: 'Ghana Health', view: 'category', param: 'Ghana Health' },
-    { label: 'Africa Health', view: 'category', param: 'Africa Health' },
-    { label: 'Global Health', view: 'category', param: 'Global Health' },
+    { label: 'Health', view: 'health' },
     { label: 'Blog', view: 'blog' },
     { label: 'Research & Innovation', view: 'category', param: 'Medical Research' },
     { label: 'Analysis', view: 'category', param: 'Analysis' },
@@ -46,6 +46,61 @@ export const Header: React.FC<HeaderProps> = ({
     onNavigate(view, param);
     setMobileMenuOpen(false);
   };
+
+  const renderHealthMenu = (mobile: boolean) => (
+    <details
+      key="Health"
+      className="group relative"
+      onBlur={(event) => {
+        if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) {
+          event.currentTarget.open = false;
+        }
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape' && event.currentTarget.open) {
+          event.currentTarget.open = false;
+          event.currentTarget.querySelector('summary')?.focus();
+        }
+      }}
+    >
+      <summary
+        className={`flex cursor-pointer list-none items-center gap-1 rounded focus-visible:outline focus-visible:outline-amber-700 [&::-webkit-details-marker]:hidden ${
+          mobile ? 'px-3 py-2 text-sm font-semibold' : 'py-1'
+        } ${
+          currentView === 'category' && currentSection && HEALTH_SECTIONS.includes(currentSection)
+            ? 'text-amber-900 dark:text-amber-400'
+            : 'hover:text-amber-900 dark:hover:text-amber-400'
+        }`}
+      >
+        Health
+        <ChevronDown aria-hidden="true" className="h-3.5 w-3.5 group-open:rotate-180" />
+      </summary>
+      <ul className={mobile
+        ? 'ml-4 border-l border-stone-200 pl-2 dark:border-stone-800'
+        : 'absolute left-0 top-full z-50 w-40 rounded border border-stone-200 bg-stone-50 p-1 shadow-lg dark:border-stone-800 dark:bg-stone-950'}
+      >
+        {HEALTH_SECTIONS.map((category) => (
+          <li key={category}>
+            <button
+              type="button"
+              aria-current={currentView === 'category' && currentSection === category ? 'page' : undefined}
+              onClick={(event) => {
+                const menu = event.currentTarget.closest('details');
+                if (menu) {
+                  menu.open = false;
+                  if (!mobile) menu.querySelector('summary')?.focus();
+                }
+                handleNavClick('category', category);
+              }}
+              className="w-full rounded px-3 py-2 text-left text-sm hover:bg-stone-100 aria-[current=page]:text-amber-900 dark:hover:bg-stone-900 dark:aria-[current=page]:text-amber-400"
+            >
+              {category}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
 
   return (
     <header className="bg-stone-50 dark:bg-stone-950 border-b border-stone-200 dark:border-stone-800 transition-colors">
@@ -166,8 +221,8 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="sticky top-0 z-40 bg-stone-50/95 dark:bg-stone-950/95 backdrop-blur-md border-b border-stone-200 dark:border-stone-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-6">
           {/* Navigation Links */}
-          <nav className="hidden xl:flex items-center flex-wrap gap-x-4 gap-y-1 text-[13px] font-semibold text-stone-800 dark:text-stone-200 tracking-wide">
-            {navLinks.map((item) => (
+          <nav className="hidden lg:flex items-center flex-wrap gap-x-4 gap-y-1 text-[13px] font-semibold text-stone-800 dark:text-stone-200 tracking-wide">
+            {navLinks.map((item) => item.view === 'health' ? renderHealthMenu(false) : (
               <button
                 key={item.label}
                 onClick={() => handleNavClick(item.view, item.param)}
@@ -184,7 +239,7 @@ export const Header: React.FC<HeaderProps> = ({
           </nav>
 
           {/* Compact brand text for mobile view */}
-          <div className="xl:hidden flex items-center gap-2">
+          <div className="lg:hidden flex items-center gap-2">
             <img
               src={brandSettings.logoUrl}
               alt="Logo"
@@ -212,7 +267,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Mobile menu trigger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="xl:hidden p-1.5 text-stone-700 dark:text-stone-300 hover:text-stone-900 dark:hover:text-stone-100"
+              className="lg:hidden p-1.5 text-stone-700 dark:text-stone-300 hover:text-stone-900 dark:hover:text-stone-100"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -222,9 +277,9 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="xl:hidden border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950 px-4 pt-3 pb-6 space-y-2 shadow-lg">
+          <div className="lg:hidden border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950 px-4 pt-3 pb-6 space-y-2 shadow-lg">
             <div className="flex flex-col gap-1">
-              {navLinks.map((item) => (
+              {navLinks.map((item) => item.view === 'health' ? renderHealthMenu(true) : (
                 <button
                   key={item.label}
                   onClick={() => handleNavClick(item.view, item.param)}

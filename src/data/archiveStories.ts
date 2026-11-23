@@ -1,6 +1,8 @@
 import type { Article } from '../types';
+import { EDITORIAL_PHOTOS } from './editorialPhotos';
 
-type ArchiveStory = Pick<Article, 'slug' | 'title' | 'deck' | 'category' | 'publishedAt' | 'content'>;
+type ArchiveStory = Pick<Article, 'slug' | 'title' | 'deck' | 'category' | 'publishedAt' | 'content'>
+  & Partial<Pick<Article, 'imageUrl' | 'imageCaption' | 'imageCredit'>>;
 
 const stories: ArchiveStory[] = [
   {
@@ -28,6 +30,7 @@ const stories: ArchiveStory[] = [
     ],
   },
   {
+    ...EDITORIAL_PHOTOS['what-grassroots-football-needs-between-matches'],
     slug: 'what-grassroots-football-needs-between-matches',
     title: 'What grassroots football needs between matches',
     deck: 'A dependable pitch and a predictable fixture list can make the difference between a one-off tournament and a league people return to.',
@@ -40,6 +43,7 @@ const stories: ArchiveStory[] = [
     ],
   },
   {
+    ...EDITORIAL_PHOTOS['what-makes-a-good-live-music-room'],
     slug: 'what-makes-a-good-live-music-room',
     title: 'What makes a good room for live music?',
     deck: 'The details that make a small venue worth returning to, for people on both sides of the stage.',
@@ -52,6 +56,7 @@ const stories: ArchiveStory[] = [
     ],
   },
   {
+    ...EDITORIAL_PHOTOS['what-a-match-report-owes-the-game'],
     slug: 'what-a-match-report-owes-the-game',
     title: 'What a football match report owes the game',
     deck: 'The score settles the result. The report should explain the decisions and moments that shaped it.',
@@ -64,6 +69,7 @@ const stories: ArchiveStory[] = [
     ],
   },
   {
+    ...EDITORIAL_PHOTOS['how-local-films-find-their-audience'],
     slug: 'how-local-films-find-their-audience',
     title: 'How local films find their audience beyond opening night',
     deck: 'A premiere brings people together once. A wider screening run gives a film time to travel by word of mouth.',
@@ -78,6 +84,9 @@ const stories: ArchiveStory[] = [
 ];
 
 export const ARCHIVE_STORIES: Article[] = stories.map((story) => ({
+  imageUrl: '',
+  imageCaption: '',
+  imageCredit: '',
   ...story,
   id: `archive-${story.slug}`,
   articleType: 'Opinion',
@@ -85,8 +94,5 @@ export const ARCHIVE_STORIES: Article[] = stories.map((story) => ({
   featured: false,
   author: { name: 'Critical Eye Editorial', role: 'Editorial' },
   readTime: '2 min read',
-  imageUrl: '',
-  imageCaption: '',
-  imageCredit: '',
   isBlogPost: true,
 }));

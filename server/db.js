@@ -49,6 +49,10 @@ export async function initDb() {
       editor TEXT
     );
 
+    CREATE TABLE IF NOT EXISTS social_publications (
+      article_id TEXT PRIMARY KEY
+    );
+
     CREATE TABLE IF NOT EXISTS editorial_imports (
       id TEXT PRIMARY KEY
     );

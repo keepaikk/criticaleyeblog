@@ -64,6 +64,24 @@ export async function seedDatabase() {
           await insertArticle(client, article);
         }
       }
+      const photos = data.archiveArticles.filter((article) => article.image_url);
+      if (photos.length) {
+        await client.query(`
+          WITH migration AS (
+            INSERT INTO editorial_imports (id)
+            VALUES ('archive-editorial-photos')
+            ON CONFLICT DO NOTHING
+            RETURNING id
+          )
+          UPDATE articles AS article
+          SET image_url = photo.image_url, image_caption = photo.image_caption, image_credit = photo.image_credit
+          FROM migration, jsonb_to_recordset($1::jsonb)
+            AS photo(id text, image_url text, image_caption text, image_credit text)
+          WHERE article.id = photo.id AND COALESCE(article.image_url, '') = ''
+        `, [JSON.stringify(photos.map(({ id, image_url, image_caption, image_credit }) => ({
+          id, image_url, image_caption, image_credit,
+        })))]);
+      }
       await client.query('COMMIT');
     } catch (err) {
       await client.query('ROLLBACK');

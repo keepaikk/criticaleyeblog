@@ -1,3 +1,4 @@
+import { articlePath } from './utils/formatters';
 import React, { useState, useEffect } from 'react';
 import { Article, Author, BrandSettings } from './types';
 import {
@@ -81,6 +82,13 @@ export default function App() {
           fetchSettings(),
         ]);
         setArticles(articlesData);
+        const linkedArticle = articlesData.find((article) =>
+          article.status === 'Published' && window.location.pathname === articlePath(article.slug)
+        );
+        if (linkedArticle) {
+          setSelectedArticle(linkedArticle);
+          setCurrentView('article');
+        }
         setAuthors(authorsData);
         setBrandSettings(settingsData);
         // Also sync to localStorage for offline resilience
@@ -100,6 +108,17 @@ export default function App() {
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('Ghana Health');
   const [selectedPage, setSelectedPage] = useState<string>('about');
+
+  useEffect(() => {
+    const followHistory = () => {
+      const path = window.location.pathname;
+      const article = articles.find((item) => item.status === 'Published' && path === articlePath(item.slug));
+      setSelectedArticle(article || null);
+      setCurrentView(article ? 'article' : adminPath && path === adminPath ? 'admin' : 'home');
+    };
+    window.addEventListener('popstate', followHistory);
+    return () => window.removeEventListener('popstate', followHistory);
+  }, [articles, adminPath]);
 
   // Search modal state
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -179,6 +198,10 @@ export default function App() {
   const handleNavigate = (view: string, param?: string) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
+    if (view !== 'admin' && window.location.pathname.startsWith('/article/')) {
+      window.history.pushState({}, '', '/');
+    }
+
     if (view === 'home') {
       setCurrentView('home');
       setSelectedArticle(null);
@@ -209,6 +232,10 @@ export default function App() {
 
   const handleSelectArticle = (article: Article) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    const path = articlePath(article.slug);
+    if (article.status === 'Published' && window.location.pathname !== path) {
+      window.history.pushState({}, '', path);
+    }
     setSelectedArticle(article);
     setCurrentView('article');
   };

@@ -1,19 +1,7 @@
-export const GENERAL_CATEGORIES = ['Politics', 'Sports', 'Entertainment'] as const;
+import type { CATEGORIES } from '../server/categories.js';
+export { GENERAL_CATEGORIES } from '../server/categories.js';
 
-export type Category =
-  | (typeof GENERAL_CATEGORIES)[number]
-  | 'Ghana Health'
-  | 'Public Health'
-  | 'Healthcare Policy'
-  | 'Hospitals & Healthcare'
-  | 'Medicines & Pharmaceuticals'
-  | 'Maternal & Child Health'
-  | 'Medical Research'
-  | 'Health Technology'
-  | 'Mental Health'
-  | 'Nutrition & Lifestyle'
-  | 'Africa Health'
-  | 'Global Health';
+export type Category = (typeof CATEGORIES)[number];
 
 export type ArticleType = 'News' | 'Analysis' | 'Investigation' | 'Opinion' | 'Feature';
 

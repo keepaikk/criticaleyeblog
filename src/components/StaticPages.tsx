@@ -105,7 +105,7 @@ export const StaticPages: React.FC<StaticPageProps> = ({ pageId, onNavigatePage,
             <p>
               We share short-form explainers, data snapshots, and dispatches on our social channels. Join our community on{' '}
               <a
-                href="https://www.facebook.com/Criticaleyeblog/"
+                href="https://www.facebook.com/Criticaleyeblog"
                 target="_blank"
                 rel="noreferrer"
                 className="text-amber-900 dark:text-amber-400 underline decoration-amber-800/40 underline-offset-2 hover:decoration-amber-800"

@@ -75,7 +75,7 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Social icons — clean row */}
           <div className="flex items-center gap-4">
             <a
-              href="https://facebook.com/criticaleye"
+              href="https://www.facebook.com/Criticaleyeblog"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"

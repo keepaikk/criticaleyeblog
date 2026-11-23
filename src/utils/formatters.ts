@@ -6,6 +6,8 @@ const siteUrl =
   import.meta.env?.VITE_SITE_URL ||
   (typeof window !== 'undefined' ? window.location.origin : 'https://example.com');
 
+export const articlePath = (slug: string) => `/article/${encodeURIComponent(slug)}`;
+
 export function formatNewsDate(isoString: string): string {
   try {
     const d = new Date(isoString);
@@ -51,8 +53,8 @@ export function generateRssFeed(articles: Article[]): string {
       return `
         <item>
           <title>${escapeXml(a.title)}</title>
-          <link>${siteUrl}/article/${a.slug}</link>
-          <guid>${siteUrl}/article/${a.slug}</guid>
+          <link>${siteUrl}${articlePath(a.slug)}</link>
+          <guid>${siteUrl}${articlePath(a.slug)}</guid>
           <pubDate>${pubDate}</pubDate>
           <description>${escapeXml(a.deck)}</description>
           <category>${escapeXml(a.category)}</category>
@@ -81,7 +83,7 @@ export function generateSitemapXml(articles: Article[]): string {
     .filter((a) => a.status === 'Published')
     .map(
       (a) =>
-        `    <url>\n      <loc>${siteUrl}/article/${a.slug}</loc>\n      <lastmod>${a.updatedAt || a.publishedAt || now}</lastmod>\n    </url>`
+        `    <url>\n      <loc>${siteUrl}${articlePath(a.slug)}</loc>\n      <lastmod>${a.updatedAt || a.publishedAt || now}</lastmod>\n    </url>`
     )
     .join('\n');
 

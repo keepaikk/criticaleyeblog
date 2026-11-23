@@ -1,3 +1,4 @@
+import { articlePath } from '../utils/formatters';
 import React, { useState } from 'react';
 import { Article, BlogPitch } from '../types';
 import {
@@ -70,14 +71,15 @@ export const BlogHub: React.FC<BlogHubProps> = ({
 
   const handleShare = (post: Article, e: React.MouseEvent) => {
     e.stopPropagation();
+    const url = new URL(articlePath(post.slug), window.location.origin).href;
     if (navigator.share) {
       navigator.share({
         title: post.title,
         text: post.deck,
-        url: window.location.href,
+        url,
       }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(`${window.location.origin}#${post.slug}`);
+      navigator.clipboard.writeText(url);
       setCopiedId(post.id);
       setTimeout(() => setCopiedId(null), 2000);
     }

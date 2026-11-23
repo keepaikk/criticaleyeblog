@@ -1,22 +1,6 @@
-import { Article, Author, Category } from '../types';
+import { Article, Author } from '../types';
 
-import { GENERAL_CATEGORIES } from '../types';
-
-export const CATEGORIES: Category[] = [
-  ...GENERAL_CATEGORIES,
-  'Ghana Health',
-  'Public Health',
-  'Healthcare Policy',
-  'Hospitals & Healthcare',
-  'Medicines & Pharmaceuticals',
-  'Maternal & Child Health',
-  'Medical Research',
-  'Health Technology',
-  'Mental Health',
-  'Nutrition & Lifestyle',
-  'Africa Health',
-  'Global Health',
-];
+export { CATEGORIES } from '../../server/categories.js';
 
 export const AUTHORS: Author[] = [
   {
