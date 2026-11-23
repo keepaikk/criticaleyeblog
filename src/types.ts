@@ -1,4 +1,7 @@
+export const GENERAL_CATEGORIES = ['Politics', 'Sports', 'Entertainment'] as const;
+
 export type Category =
+  | (typeof GENERAL_CATEGORIES)[number]
   | 'Ghana Health'
   | 'Public Health'
   | 'Healthcare Policy'

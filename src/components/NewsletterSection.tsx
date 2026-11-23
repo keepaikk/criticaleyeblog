@@ -20,11 +20,11 @@ export const NewsletterSection: React.FC = () => {
         </span>
 
         <h2 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900 dark:text-stone-100 mt-2 mb-3 tracking-tight">
-          Essential Ghanaian & African Health Intelligence, Delivered
+          Critical Eye in Your Inbox
         </h2>
 
         <p className="text-stone-600 dark:text-stone-300 text-sm sm:text-base leading-relaxed mb-6 max-w-xl mx-auto">
-          Receive rigorous, evidence-based reporting on healthcare policies, pharmaceutical safety, clinical breakthroughs, and public health investigations directly in your inbox.
+          Get reporting and commentary on politics, sports, entertainment, and health across Ghana and Africa.
         </p>
 
         {status === 'subscribed' ? (
@@ -75,7 +75,7 @@ export const NewsletterSection: React.FC = () => {
                     onChange={() => setFrequency('daily')}
                     className="accent-amber-800 dark:accent-amber-500"
                   />
-                  <span>Breaking Health Alerts</span>
+                  <span>Breaking News Alerts</span>
                 </label>
               </div>
 

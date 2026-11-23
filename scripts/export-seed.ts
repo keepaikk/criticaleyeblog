@@ -1,7 +1,9 @@
 import { INITIAL_ARTICLES, AUTHORS } from '../src/data/newsData';
+import { ARCHIVE_STORIES } from '../src/data/archiveStories';
+import { Article } from '../src/types';
 import { writeFileSync } from 'fs';
 
-const dbArticles = INITIAL_ARTICLES.map(a => ({
+const toDatabaseArticle = (a: Article) => ({
   id: a.id,
   slug: a.slug,
   title: a.title,
@@ -27,7 +29,10 @@ const dbArticles = INITIAL_ARTICLES.map(a => ({
   medical_reviewer: a.medicalReviewer,
   is_blog_post: a.isBlogPost,
   blog_series: a.blogSeries,
-}));
+});
+
+const dbArticles = INITIAL_ARTICLES.map(toDatabaseArticle);
+const archiveArticles = ARCHIVE_STORIES.map(toDatabaseArticle);
 
 const dbAuthors = AUTHORS.map(a => ({
   id: a.id,
@@ -38,5 +43,5 @@ const dbAuthors = AUTHORS.map(a => ({
   articles_count: a.articlesCount,
 }));
 
-writeFileSync('server/seed-data.json', JSON.stringify({ articles: dbArticles, authors: dbAuthors }, null, 2));
-console.log('Exported', dbArticles.length, 'articles and', dbAuthors.length, 'authors');
+writeFileSync('server/seed-data.json', JSON.stringify({ articles: dbArticles, archiveArticles, authors: dbAuthors }, null, 2));
+console.log('Exported', dbArticles.length + archiveArticles.length, 'articles and', dbAuthors.length, 'authors');

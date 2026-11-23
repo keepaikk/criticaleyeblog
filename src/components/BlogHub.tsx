@@ -13,7 +13,6 @@ import {
   Filter,
   MessageSquare,
   ShieldCheck,
-  Stethoscope,
   BookOpen,
 } from 'lucide-react';
 
@@ -130,17 +129,16 @@ export const BlogHub: React.FC<BlogHubProps> = ({
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-amber-900 dark:text-amber-400 font-bold">
-              <Stethoscope className="w-4 h-4 text-amber-800 dark:text-amber-500" />
-              <span>Critical Eye Healthcare Blog</span>
+              <PenTool className="w-4 h-4 text-amber-800 dark:text-amber-500" />
+              <span>Critical Eye Blog</span>
               <span className="text-stone-300 dark:text-stone-700">·</span>
               <span>Frontline Dispatches & Commentary</span>
             </div>
             <h1 className="text-3xl sm:text-5xl font-serif font-black text-stone-950 dark:text-stone-50 mt-2 tracking-tight">
-              Clinical Perspectives & Field Notes
+              Essays & Field Notes
             </h1>
             <p className="text-stone-600 dark:text-stone-300 text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
-              Unvarnished reflections, frontline clinical experiences, and evidence-based health commentary
-              authored by Ghanaian physicians, rural midwives, pharmacists, and global health researchers.
+              Commentary and firsthand perspectives on politics, sports, entertainment, and health.
             </p>
           </div>
 
@@ -150,7 +148,7 @@ export const BlogHub: React.FC<BlogHubProps> = ({
               className="inline-flex items-center gap-2 px-4 py-2 bg-amber-900 hover:bg-amber-950 dark:bg-amber-600 dark:hover:bg-amber-500 text-white rounded text-xs font-semibold tracking-wide shadow-xs transition-colors"
             >
               <PenTool className="w-3.5 h-3.5" />
-              <span>Submit a Clinician Dispatch</span>
+              <span>Pitch a Story</span>
             </button>
             <button
               onClick={onNavigateHome}
@@ -188,22 +186,24 @@ export const BlogHub: React.FC<BlogHubProps> = ({
         <div className="mb-12 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden shadow-xs hover:border-amber-800/40 dark:hover:border-amber-500/40 transition-colors">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
             {/* Visual Side */}
-            <div
-              onClick={() => onSelectArticle(featuredPost)}
-              className="lg:col-span-7 cursor-pointer group relative overflow-hidden aspect-16/10 lg:aspect-auto"
-            >
-              <img
-                src={featuredPost.imageUrl}
-                alt={featuredPost.title}
-                className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700"
-              />
-              <div className="absolute top-3 left-3 bg-stone-950/85 backdrop-blur-xs text-amber-400 text-[10px] font-mono uppercase tracking-widest px-2.5 py-1 rounded font-bold">
-                {featuredPost.blogSeries || 'Featured Healthcare Dispatch'}
+            {featuredPost.imageUrl && (
+              <div
+                onClick={() => onSelectArticle(featuredPost)}
+                className="lg:col-span-7 cursor-pointer group relative overflow-hidden aspect-16/10 lg:aspect-auto"
+              >
+                <img
+                  src={featuredPost.imageUrl}
+                  alt={featuredPost.title}
+                  className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700"
+                />
+                <div className="absolute top-3 left-3 bg-stone-950/85 backdrop-blur-xs text-amber-400 text-[10px] font-mono uppercase tracking-widest px-2.5 py-1 rounded font-bold">
+                  {featuredPost.blogSeries || 'Featured Essay'}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Content Side */}
-            <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between">
+            <div className={`p-6 sm:p-8 flex flex-col justify-between ${featuredPost.imageUrl ? 'lg:col-span-5' : 'lg:col-span-12'}`}>
               <div>
                 {/* Meta zero-pill strip */}
                 <div className="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400 mb-2">
@@ -321,7 +321,7 @@ export const BlogHub: React.FC<BlogHubProps> = ({
       <div className="mb-12">
         <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-3 mb-6">
           <h3 className="text-xl font-serif font-black text-stone-900 dark:text-stone-100">
-            {selectedSeries === 'All' ? 'All Frontline Dispatches' : `${selectedSeries} Archive`}
+            {selectedSeries === 'All' ? 'All Blog Posts' : `${selectedSeries} Archive`}
           </h3>
           <span className="text-xs font-mono text-stone-500 dark:text-stone-400">
             {remainingPosts.length} commentary pieces
@@ -349,16 +349,18 @@ export const BlogHub: React.FC<BlogHubProps> = ({
                 className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden flex flex-col justify-between cursor-pointer group hover:border-amber-800/40 dark:hover:border-amber-500/40 shadow-2xs transition-all"
               >
                 <div>
-                  <div className="relative aspect-16/10 overflow-hidden bg-stone-100 dark:bg-stone-800">
-                    <img
-                      src={post.imageUrl}
-                      alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
-                    />
-                    <div className="absolute top-2 left-2 bg-stone-950/80 backdrop-blur-xs text-amber-400 text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded font-bold">
-                      {post.blogSeries || post.articleType}
+                  {post.imageUrl && (
+                    <div className="relative aspect-16/10 overflow-hidden bg-stone-100 dark:bg-stone-800">
+                      <img
+                        src={post.imageUrl}
+                        alt={post.title}
+                        className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
+                      />
+                      <div className="absolute top-2 left-2 bg-stone-950/80 backdrop-blur-xs text-amber-400 text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded font-bold">
+                        {post.blogSeries || post.articleType}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   <div className="p-5">
                     <div className="flex items-center gap-2 text-[11px] text-stone-500 dark:text-stone-400 mb-2 font-medium">
@@ -429,14 +431,13 @@ export const BlogHub: React.FC<BlogHubProps> = ({
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-amber-300 dark:text-amber-400 font-bold">
             <ShieldCheck className="w-4 h-4" />
-            <span>Practitioner Submissions</span>
+            <span>Contributor Pitches</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-serif font-black tracking-tight">
-            Are You a Doctor, Nurse, Pharmacist, or Health Researcher in Ghana?
+            Have a story for Critical Eye?
           </h3>
           <p className="text-stone-200 dark:text-stone-400 text-xs sm:text-sm max-w-2xl leading-relaxed">
-            Critical Eye accepts frontline essays, clinical case reflections, and policy critique.
-            We uphold strict peer-reviewed editorial standards and protect author confidentiality where required.
+            Pitch an essay, a reported story, or a firsthand account.
           </p>
         </div>
 
@@ -465,24 +466,23 @@ export const BlogHub: React.FC<BlogHubProps> = ({
               <div className="py-8 text-center space-y-3">
                 <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
                 <h3 className="text-xl font-serif font-bold text-stone-900 dark:text-stone-100">
-                  Dispatch Pitch Received
+                  Pitch Saved
                 </h3>
                 <p className="text-xs text-stone-600 dark:text-stone-400 max-w-sm mx-auto">
-                  Thank you for contributing your voice. Our medical editor will review your proposal
-                  within 48 hours.
+                  Your pitch was saved in this browser.
                 </p>
               </div>
             ) : (
               <div>
                 <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-amber-900 dark:text-amber-400 font-bold mb-1">
                   <HeartPulse className="w-4 h-4" />
-                  <span>Clinical Perspective Submission</span>
+                  <span>Story Pitch</span>
                 </div>
                 <h3 className="text-xl font-serif font-black text-stone-900 dark:text-stone-100">
-                  Pitch to Critical Eye Healthcare Blog
+                  Pitch to Critical Eye Blog
                 </h3>
                 <p className="text-xs text-stone-600 dark:text-stone-400 mt-1 mb-4">
-                  Please share your background, proposed topic, and central clinical thesis.
+                  Please share your background, proposed topic, and main argument.
                 </p>
 
                 <form onSubmit={handlePitchSubmit} className="space-y-3 text-xs">
@@ -510,19 +510,19 @@ export const BlogHub: React.FC<BlogHubProps> = ({
                         required
                         value={pitchForm.profession}
                         onChange={(e) => setPitchForm({ ...pitchForm, profession: e.target.value })}
-                        placeholder="e.g. Pediatrician, Midwife, Pharmacist"
+                        placeholder="e.g. Coach, filmmaker, or nurse"
                         className="w-full px-3 py-2 rounded border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-800"
                       />
                     </div>
                     <div>
                       <label className="block font-semibold text-stone-700 dark:text-stone-300 mb-1">
-                        Institution / Clinic
+                        Organization
                       </label>
                       <input
                         type="text"
                         value={pitchForm.institution}
                         onChange={(e) => setPitchForm({ ...pitchForm, institution: e.target.value })}
-                        placeholder="e.g. Korle Bu / GHS Afram Plains"
+                        placeholder="e.g. Local club, studio, or clinic"
                         className="w-full px-3 py-2 rounded border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-800"
                       />
                     </div>

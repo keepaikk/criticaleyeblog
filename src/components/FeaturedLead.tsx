@@ -44,32 +44,34 @@ export const FeaturedLead: React.FC<FeaturedLeadProps> = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left 7 Columns: Hero Image with High Quality Framing */}
-        <div
-          className="lg:col-span-7 group cursor-pointer overflow-hidden rounded-sm bg-stone-200 dark:bg-stone-800"
-          onClick={() => onSelect(article)}
-        >
-          <div className="relative aspect-16/9 overflow-hidden">
-            <img
-              src={article.imageUrl}
-              alt={article.title}
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
-            />
+        {article.imageUrl && (
+          <div
+            className="lg:col-span-7 group cursor-pointer overflow-hidden rounded-sm bg-stone-200 dark:bg-stone-800"
+            onClick={() => onSelect(article)}
+          >
+            <div className="relative aspect-16/9 overflow-hidden">
+              <img
+                src={article.imageUrl}
+                alt={article.title}
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
+              />
+            </div>
+            {article.imageCaption && (
+              <p className="mt-2 text-xs font-serif italic text-stone-500 dark:text-stone-400 line-clamp-2">
+                {article.imageCaption}
+                {article.imageCredit && (
+                  <span className="ml-1.5 not-italic text-stone-400 dark:text-stone-500 font-sans">
+                    — Credit: {article.imageCredit}
+                  </span>
+                )}
+              </p>
+            )}
           </div>
-          {article.imageCaption && (
-            <p className="mt-2 text-xs font-serif italic text-stone-500 dark:text-stone-400 line-clamp-2">
-              {article.imageCaption}
-              {article.imageCredit && (
-                <span className="ml-1.5 not-italic text-stone-400 dark:text-stone-500 font-sans">
-                  — Credit: {article.imageCredit}
-                </span>
-              )}
-            </p>
-          )}
-        </div>
+        )}
 
         {/* Right 5 Columns: Dominant Editorial Headline, Deck, Byline */}
-        <div className="lg:col-span-5 flex flex-col justify-between">
+        <div className={`flex flex-col justify-between ${article.imageUrl ? 'lg:col-span-5' : 'lg:col-span-12'}`}>
           <div>
             <div className="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400 mb-2 font-medium">
               <span>{article.articleType}</span>

@@ -1,6 +1,9 @@
 import { Article, Author, Category } from '../types';
 
+import { GENERAL_CATEGORIES } from '../types';
+
 export const CATEGORIES: Category[] = [
+  ...GENERAL_CATEGORIES,
   'Ghana Health',
   'Public Health',
   'Healthcare Policy',

@@ -770,7 +770,7 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                  Healthcare Category
+                  Category
                 </label>
                 <select
                   value={editingArticle.category}
@@ -827,6 +827,22 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({
 
             {/* Author and Read time */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label htmlFor="article-publication-date" className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                  Publication Date
+                </label>
+                <input
+                  id="article-publication-date"
+                  type="date"
+                  value={editingArticle.publishedAt?.slice(0, 10) || ''}
+                  onChange={(e) => setEditingArticle({
+                    ...editingArticle,
+                    publishedAt: e.target.value ? `${e.target.value}T12:00:00Z` : '',
+                  })}
+                  className="w-full p-2 bg-white border border-stone-300 rounded text-xs focus:outline-none"
+                />
+              </div>
+
               <div>
                 <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
                   Assigned Reporter / Author

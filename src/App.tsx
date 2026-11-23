@@ -31,7 +31,7 @@ import { AdminAuth } from './admin/AdminAuth';
 import { AdminCMS } from './components/AdminCMS';
 import { BlogHub } from './components/BlogHub';
 import { Footer } from './components/Footer';
-import { ArrowLeft, Bookmark, Stethoscope, PenTool, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Bookmark, PenTool, ArrowRight } from 'lucide-react';
 
 export default function App() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -226,7 +226,12 @@ export default function App() {
   }, []);
 
   // Filter published articles
-  const publishedArticles = articles.filter((a) => a.status === 'Published');
+  const publishedArticles = articles
+    .filter((article) => article.status === 'Published')
+    .sort((a, b) => (Date.parse(b.publishedAt) || 0) - (Date.parse(a.publishedAt) || 0));
+  const archiveYears = ['2025', '2024', '2023'].filter((year) =>
+    publishedArticles.some((article) => article.publishedAt?.startsWith(year))
+  );
 
   // Featured lead story
   const featuredArticle = publishedArticles.find((a) => a.featured) || publishedArticles[0];
@@ -287,6 +292,7 @@ export default function App() {
       {currentView !== 'admin' && (
         <Header
           currentView={currentView}
+          currentSection={currentView === 'category' ? selectedCategory : currentView === 'page' ? selectedPage : undefined}
           onNavigate={handleNavigate}
           onOpenSearch={() => setIsSearchOpen(true)}
           bookmarksCount={bookmarks.length}
@@ -351,14 +357,11 @@ export default function App() {
                 <span>Return to Homepage</span>
               </button>
               <div className="text-xs font-mono uppercase tracking-widest text-amber-900 dark:text-amber-400 font-semibold">
-                Healthcare Category Archive
+                Category Archive
               </div>
               <h1 className="text-3xl sm:text-4xl font-serif font-bold text-stone-950 dark:text-stone-50 mt-1">
                 {selectedCategory}
               </h1>
-              <p className="text-stone-600 dark:text-stone-300 text-sm mt-1">
-                Authoritative reporting, policy dispatches, and clinical investigations covering {selectedCategory}.
-              </p>
             </div>
 
             {(() => {
@@ -478,6 +481,32 @@ export default function App() {
               onSelect={handleSelectArticle}
             />
 
+            {archiveYears.length > 0 && (
+              <section className="mb-14" aria-label="From the archive">
+                <SectionHeader title="From the Archive" />
+                {archiveYears.map((year) => {
+                  const stories = publishedArticles.filter((article) => article.publishedAt?.startsWith(year));
+
+                  return (
+                    <div key={year} className="mb-6">
+                      <h3 className="mb-3 font-serif text-lg font-bold">{year}</h3>
+                      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        {stories.map((article) => (
+                          <ArticleCard
+                            key={article.id}
+                            article={article}
+                            onSelect={handleSelectArticle}
+                            isBookmarked={bookmarks.includes(article.id)}
+                            onToggleBookmark={handleToggleBookmarkArticle}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </section>
+            )}
+
             <section className="mb-14">
               <SectionHeader
                 number="03"
@@ -556,14 +585,14 @@ export default function App() {
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-amber-200/70 dark:border-stone-800 mb-6">
                 <div>
                   <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-amber-900 dark:text-amber-400 font-bold">
-                    <Stethoscope className="w-4 h-4 text-amber-800 dark:text-amber-500" />
-                    <span>Critical Eye Healthcare Blog</span>
+                    <PenTool className="w-4 h-4 text-amber-800 dark:text-amber-500" />
+                    <span>Critical Eye Blog</span>
                   </div>
                   <h3 className="text-2xl sm:text-3xl font-serif font-black text-stone-950 dark:text-stone-50 mt-1">
-                    Frontline Dispatches & Clinician Commentary
+                    Essays & Commentary
                   </h3>
                   <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 mt-1">
-                    First-hand insights from Ghanaian doctors, rural midwives, pharmacists, and health policy advocates.
+                    Perspectives on politics, sports, entertainment, and health.
                   </p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
@@ -585,16 +614,18 @@ export default function App() {
                     className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded overflow-hidden flex flex-col justify-between cursor-pointer group hover:border-amber-800/40 dark:hover:border-amber-500/40 shadow-2xs transition-all"
                   >
                     <div>
-                      <div className="aspect-16/10 relative overflow-hidden bg-stone-100 dark:bg-stone-800">
-                        <img
-                          src={art.imageUrl}
-                          alt={art.title}
-                          className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
-                        />
-                        <div className="absolute top-2 left-2 bg-stone-950/85 backdrop-blur-xs text-amber-400 text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded font-bold">
-                          {art.blogSeries || 'Clinician Dispatch'}
+                      {art.imageUrl && (
+                        <div className="aspect-16/10 relative overflow-hidden bg-stone-100 dark:bg-stone-800">
+                          <img
+                            src={art.imageUrl}
+                            alt={art.title}
+                            className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
+                          />
+                          <div className="absolute top-2 left-2 bg-stone-950/85 backdrop-blur-xs text-amber-400 text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded font-bold">
+                            {art.blogSeries || art.articleType}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       <div className="p-4">
                         <div className="text-[10px] font-semibold text-amber-900 dark:text-amber-400 uppercase tracking-wider mb-1">

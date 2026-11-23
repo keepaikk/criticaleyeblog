@@ -97,13 +97,13 @@ export const StaticPages: React.FC<StaticPageProps> = ({ pageId, onNavigatePage,
 
           <div className="prose-editorial text-stone-700 dark:text-stone-300">
             <p className="editorial-dropcap font-sans">
-              Critical Eye is a trusted source for credible healthcare journalism, insightful analysis, and stories that matter. We believe readers deserve more than rapid headlines; they deserve verifiable facts, systemic context, institutional accountability, and perspectives that empower informed decisions.
+              Critical Eye publishes reporting, analysis, and commentary on politics, sports, entertainment, and health.
             </p>
             <p>
-              Headquartered in Accra, Ghana, our reporting focuses on Ghanaian healthcare developments, regional public health challenges across West Africa, and the critical global health decisions that shape African wellbeing.
+              From Accra, we cover public life in Ghana and across Africa, including the health policies and public health issues that affect our communities.
             </p>
             <p>
-              Beyond the long-form editorial platform, Critical Eye Blog operates as a digital public-health newsroom: short-form explainers, data snapshots, and frontline dispatches ship first on our social channels and then mature into full investigations here. Join our community on{' '}
+              We share short-form explainers, data snapshots, and dispatches on our social channels. Join our community on{' '}
               <a
                 href="https://www.facebook.com/Criticaleyeblog/"
                 target="_blank"
@@ -123,7 +123,7 @@ export const StaticPages: React.FC<StaticPageProps> = ({ pageId, onNavigatePage,
                 <span>Our Mission</span>
               </h3>
               <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
-                To provide accurate, independent, and impactful healthcare journalism that informs the public, promotes institutional accountability, and contributes meaningfully to national and global health development.
+                To report accurately and independently, explain decisions that affect our readers, and hold institutions accountable.
               </p>
             </div>
 
@@ -133,7 +133,7 @@ export const StaticPages: React.FC<StaticPageProps> = ({ pageId, onNavigatePage,
                 <span>Our Vision</span>
               </h3>
               <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
-                To become West Africa’s most trusted digital healthcare news platform, recognized internationally for journalistic rigor, epidemiological integrity, and relentless dedication to the public interest.
+                To earn readers’ trust across West Africa through rigorous reporting in the public interest.
               </p>
             </div>
           </div>
@@ -364,7 +364,7 @@ export const StaticPages: React.FC<StaticPageProps> = ({ pageId, onNavigatePage,
               <AlertTriangle className="w-6 h-6 text-amber-800 dark:text-amber-400 shrink-0 mt-0.5" />
               <div className="text-xs sm:text-sm text-stone-800 dark:text-stone-200 leading-relaxed space-y-2">
                 <p className="font-bold text-stone-950 dark:text-stone-100">
-                  Critical Eye is an independent journalistic healthcare publication, not a medical clinic or licensed healthcare provider.
+                  Critical Eye is an independent news and commentary publication, not a medical clinic or licensed healthcare provider.
                 </p>
                 <p>
                   All articles, infographics, analysis, quotes, and research reports published across our platforms are intended solely for general informational, educational, and public accountability purposes.
@@ -402,7 +402,7 @@ export const StaticPages: React.FC<StaticPageProps> = ({ pageId, onNavigatePage,
               Contact Critical Eye Desk
             </h1>
             <p className="text-stone-600 dark:text-stone-300 text-sm">
-              We welcome confidential news tips, clinical research submissions, press inquiries, and reader feedback.
+              We welcome confidential news tips, research submissions, press inquiries, and reader feedback.
             </p>
           </div>
 

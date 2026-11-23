@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Search, Menu, X, Bookmark, Sun, Moon, Sparkles } from 'lucide-react';
-import { BrandSettings } from '../types';
+import { BrandSettings, GENERAL_CATEGORIES } from '../types';
 import { ThemePreference } from '../utils/theme';
 
 interface HeaderProps {
   currentView: string;
+  currentSection?: string;
   onNavigate: (view: string, param?: string) => void;
   onOpenSearch: () => void;
   bookmarksCount: number;
@@ -17,6 +18,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   currentView,
+  currentSection,
   onNavigate,
   onOpenSearch,
   bookmarksCount,
@@ -30,10 +32,11 @@ export const Header: React.FC<HeaderProps> = ({
 
   const navLinks = [
     { label: 'Home', view: 'home' },
+    ...GENERAL_CATEGORIES.map((category) => ({ label: category, view: 'category', param: category })),
     { label: 'Ghana Health', view: 'category', param: 'Ghana Health' },
     { label: 'Africa Health', view: 'category', param: 'Africa Health' },
     { label: 'Global Health', view: 'category', param: 'Global Health' },
-    { label: 'Healthcare Blog', view: 'blog' },
+    { label: 'Blog', view: 'blog' },
     { label: 'Research & Innovation', view: 'category', param: 'Medical Research' },
     { label: 'Analysis', view: 'category', param: 'Analysis' },
     { label: 'About', view: 'page', param: 'about' },
@@ -133,11 +136,7 @@ export const Header: React.FC<HeaderProps> = ({
                 {brandSettings.tagline}
               </p>
               <div className="flex items-center justify-center lg:justify-start gap-2 text-[11px] text-stone-500 dark:text-stone-400 mt-1 font-medium">
-                <span>Ghanaian Healthcare</span>
-                <span aria-hidden="true" className="text-stone-300 dark:text-stone-700">·</span>
-                <span>African Public Health</span>
-                <span aria-hidden="true" className="text-stone-300 dark:text-stone-700">·</span>
-                <span>Global Medical Policy</span>
+                <span>Politics, Sports, Entertainment & Health</span>
               </div>
             </div>
           </div>
@@ -167,13 +166,14 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="sticky top-0 z-40 bg-stone-50/95 dark:bg-stone-950/95 backdrop-blur-md border-b border-stone-200 dark:border-stone-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-6">
           {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-6 text-[13px] font-semibold text-stone-800 dark:text-stone-200 tracking-wide">
+          <nav className="hidden xl:flex items-center flex-wrap gap-x-4 gap-y-1 text-[13px] font-semibold text-stone-800 dark:text-stone-200 tracking-wide">
             {navLinks.map((item) => (
               <button
                 key={item.label}
                 onClick={() => handleNavClick(item.view, item.param)}
+                aria-current={currentView === item.view && item.param === currentSection ? 'page' : undefined}
                 className={`py-1 border-b-2 transition-colors whitespace-nowrap shrink-0 ${
-                  currentView === item.view && (!item.param || item.label === 'Home' || item.label === 'Healthcare Blog')
+                  currentView === item.view && item.param === currentSection
                     ? 'border-amber-900 dark:border-amber-500 text-amber-900 dark:text-amber-400 font-bold'
                     : 'border-transparent text-stone-700 dark:text-stone-300 hover:text-amber-900 dark:hover:text-amber-400 hover:border-amber-800/40'
                 }`}
@@ -184,7 +184,7 @@ export const Header: React.FC<HeaderProps> = ({
           </nav>
 
           {/* Compact brand text for mobile view */}
-          <div className="lg:hidden flex items-center gap-2">
+          <div className="xl:hidden flex items-center gap-2">
             <img
               src={brandSettings.logoUrl}
               alt="Logo"
@@ -212,7 +212,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Mobile menu trigger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-1.5 text-stone-700 dark:text-stone-300 hover:text-stone-900 dark:hover:text-stone-100"
+              className="xl:hidden p-1.5 text-stone-700 dark:text-stone-300 hover:text-stone-900 dark:hover:text-stone-100"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -222,12 +222,13 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950 px-4 pt-3 pb-6 space-y-2 shadow-lg">
+          <div className="xl:hidden border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950 px-4 pt-3 pb-6 space-y-2 shadow-lg">
             <div className="flex flex-col gap-1">
               {navLinks.map((item) => (
                 <button
                   key={item.label}
                   onClick={() => handleNavClick(item.view, item.param)}
+                  aria-current={currentView === item.view && item.param === currentSection ? 'page' : undefined}
                   className="text-left px-3 py-2 text-sm font-semibold text-stone-800 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 rounded"
                 >
                   {item.label}

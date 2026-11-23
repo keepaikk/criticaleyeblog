@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Article } from '../types';
+import { Article, GENERAL_CATEGORIES } from '../types';
 import { formatNewsDate } from '../utils/formatters';
 import {
   ArrowLeft,
@@ -219,7 +219,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
         {article.isBlogPost && (
           <span className="inline-flex items-center gap-1 text-amber-900 dark:text-amber-400 font-bold bg-amber-100/70 dark:bg-amber-950/80 px-2 py-0.5 rounded text-[11px] normal-case">
             <Stethoscope className="w-3.5 h-3.5" />
-            <span>Healthcare Blog: {article.blogSeries || 'Clinician Dispatch'}</span>
+            <span>Blog · {article.blogSeries || article.articleType}</span>
           </span>
         )}
         <span className="text-amber-900 dark:text-amber-400 font-bold">{article.category}</span>
@@ -263,26 +263,28 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
       </div>
 
       {/* Featured Photojournalism Visual */}
-      <figure className="mb-8">
-        <div className="relative aspect-16/9 overflow-hidden rounded-sm bg-stone-200 dark:bg-stone-800">
-          <img
-            src={article.imageUrl}
-            alt={article.title}
-            referrerPolicy="no-referrer"
-            className="w-full h-full object-cover"
-          />
-        </div>
-        {(article.imageCaption || article.imageCredit) && (
-          <figcaption className="mt-2 text-xs text-stone-500 dark:text-stone-400 font-serif italic flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-            <span>{article.imageCaption}</span>
-            {article.imageCredit && (
-              <span className="not-italic text-stone-400 dark:text-stone-500 font-sans font-medium shrink-0">
-                Photo: {article.imageCredit}
-              </span>
-            )}
-          </figcaption>
-        )}
-      </figure>
+      {article.imageUrl && (
+        <figure className="mb-8">
+          <div className="relative aspect-16/9 overflow-hidden rounded-sm bg-stone-200 dark:bg-stone-800">
+            <img
+              src={article.imageUrl}
+              alt={article.title}
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          {(article.imageCaption || article.imageCredit) && (
+            <figcaption className="mt-2 text-xs text-stone-500 dark:text-stone-400 font-serif italic flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+              <span>{article.imageCaption}</span>
+              {article.imageCredit && (
+                <span className="not-italic text-stone-400 dark:text-stone-500 font-sans font-medium shrink-0">
+                  Photo: {article.imageCredit}
+                </span>
+              )}
+            </figcaption>
+          )}
+        </figure>
+      )}
 
       {/* Audio Playback Status Notice */}
       {isPlayingAudio && (
@@ -384,15 +386,17 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
       )}
 
       {/* Mandatory Critical Eye Medical Disclaimer */}
-      <div className="mt-8 p-4 bg-stone-100 dark:bg-stone-900/80 border border-stone-200/80 dark:border-stone-800 rounded-sm text-xs text-stone-600 dark:text-stone-400">
-        <div className="font-bold text-stone-900 dark:text-stone-100 mb-1 flex items-center gap-1.5">
-          <ShieldCheck className="w-4 h-4 text-amber-800 dark:text-amber-400" />
-          <span>Critical Eye Medical Journalism Notice</span>
+      {!GENERAL_CATEGORIES.some((category) => category === article.category) && (
+        <div className="mt-8 p-4 bg-stone-100 dark:bg-stone-900/80 border border-stone-200/80 dark:border-stone-800 rounded-sm text-xs text-stone-600 dark:text-stone-400">
+          <div className="font-bold text-stone-900 dark:text-stone-100 mb-1 flex items-center gap-1.5">
+            <ShieldCheck className="w-4 h-4 text-amber-800 dark:text-amber-400" />
+            <span>Critical Eye Medical Journalism Notice</span>
+          </div>
+          <p className="leading-relaxed text-stone-600 dark:text-stone-400">
+            This article is published strictly for informational, educational, and public accountability reporting purposes. It does not provide clinical diagnoses, individualized treatment recommendations, or medical advice. Readers experiencing health symptoms should seek care from a licensed healthcare provider or authorized medical clinic.
+          </p>
         </div>
-        <p className="leading-relaxed text-stone-600 dark:text-stone-400">
-          This article is published strictly for informational, educational, and public accountability reporting purposes. It does not provide clinical diagnoses, individualized treatment recommendations, or medical advice. Readers experiencing health symptoms should seek care from a licensed healthcare provider or authorized medical clinic.
-        </p>
-      </div>
+      )}
 
       {/* Social Sharing & Action Bar */}
       <div className="mt-10 pt-6 border-t border-stone-200 dark:border-stone-800 flex flex-wrap items-center justify-between gap-4">
@@ -434,7 +438,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
       {relatedArticles.length > 0 && (
         <section className="mt-14 pt-8 border-t border-stone-300 dark:border-stone-800">
           <h2 className="text-lg font-serif font-bold text-stone-900 dark:text-stone-100 mb-6">
-            Related Healthcare Coverage
+            Related Coverage
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {relatedArticles.map((rel) => (
@@ -444,14 +448,16 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
                 className="group cursor-pointer flex flex-col justify-between"
               >
                 <div>
-                  <div className="aspect-16/10 overflow-hidden rounded-sm bg-stone-200 dark:bg-stone-800 mb-2">
-                    <img
-                      src={rel.imageUrl}
-                      alt={rel.title}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
+                  {rel.imageUrl && (
+                    <div className="aspect-16/10 overflow-hidden rounded-sm bg-stone-200 dark:bg-stone-800 mb-2">
+                      <img
+                        src={rel.imageUrl}
+                        alt={rel.title}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  )}
                   <div className="text-[11px] font-semibold text-amber-900 dark:text-amber-400 mb-1">
                     {rel.category}
                   </div>

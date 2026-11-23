@@ -24,15 +24,17 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
         onClick={() => onSelect(article)}
         className="group cursor-pointer grid grid-cols-1 sm:grid-cols-12 gap-4 items-start pt-4 pb-5 border-b border-stone-200/80 dark:border-stone-800/80 hover:border-amber-800/40 dark:hover:border-amber-500/40 transition-colors"
       >
-        <div className="sm:col-span-4 aspect-16/10 sm:aspect-4/3 overflow-hidden rounded-sm bg-stone-200 dark:bg-stone-800 shrink-0">
-          <img
-            src={article.imageUrl}
-            alt={article.title}
-            referrerPolicy="no-referrer"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-        </div>
-        <div className="sm:col-span-8 flex flex-col justify-between h-full">
+        {article.imageUrl && (
+          <div className="sm:col-span-4 aspect-16/10 sm:aspect-4/3 overflow-hidden rounded-sm bg-stone-200 dark:bg-stone-800 shrink-0">
+            <img
+              src={article.imageUrl}
+              alt={article.title}
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        )}
+        <div className={`flex flex-col justify-between h-full ${article.imageUrl ? 'sm:col-span-8' : 'sm:col-span-12'}`}>
           <div>
             <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-400 mb-1.5 font-medium">
               <div className="flex items-center gap-2">
@@ -98,14 +100,16 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
       className="group cursor-pointer flex flex-col justify-between h-full bg-stone-50/50 dark:bg-stone-900/40 hover:bg-stone-100/50 dark:hover:bg-stone-900/80 p-2 sm:p-3 rounded-sm transition-colors border border-transparent hover:border-stone-200 dark:hover:border-stone-800"
     >
       <div>
-        <div className="aspect-16/10 overflow-hidden rounded-sm bg-stone-200 dark:bg-stone-800 mb-3">
-          <img
-            src={article.imageUrl}
-            alt={article.title}
-            referrerPolicy="no-referrer"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-        </div>
+        {article.imageUrl && (
+          <div className="aspect-16/10 overflow-hidden rounded-sm bg-stone-200 dark:bg-stone-800 mb-3">
+            <img
+              src={article.imageUrl}
+              alt={article.title}
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        )}
 
         <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-400 mb-1.5 font-medium">
           <div className="flex items-center gap-2">

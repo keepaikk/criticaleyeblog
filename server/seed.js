@@ -1,9 +1,26 @@
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import { query } from './db.js';
+import pool, { query } from './db.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+async function insertArticle(client, a) {
+  await client.query(`INSERT INTO articles (
+    id, slug, title, deck, category, article_type, status, featured,
+    author_name, author_role, author_avatar, published_at, updated_at,
+    read_time, image_url, image_caption, image_credit, content, key_takeaways,
+    pull_quote_text, pull_quote_attribution, sources, medical_reviewer,
+    is_blog_post, blog_series
+  ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)
+  ON CONFLICT (id) DO NOTHING`, [
+    a.id, a.slug, a.title, a.deck, a.category, a.article_type, a.status, a.featured,
+    a.author_name, a.author_role, a.author_avatar, a.published_at, a.updated_at,
+    a.read_time, a.image_url, a.image_caption, a.image_credit, a.content, a.key_takeaways,
+    a.pull_quote_text, a.pull_quote_attribution, a.sources, a.medical_reviewer,
+    a.is_blog_post, a.blog_series,
+  ]);
+}
 
 export async function seedDatabase() {
   console.log('Seeding database...');
@@ -27,24 +44,33 @@ export async function seedDatabase() {
     }
 
     for (const a of data.articles || []) {
-      await query(`INSERT INTO articles (
-        id, slug, title, deck, category, article_type, status, featured,
-        author_name, author_role, author_avatar, published_at, updated_at,
-        read_time, image_url, image_caption, image_credit, content, key_takeaways,
-        pull_quote_text, pull_quote_attribution, sources, medical_reviewer,
-        is_blog_post, blog_series
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)
-      ON CONFLICT (id) DO NOTHING`, [
-        a.id, a.slug, a.title, a.deck, a.category, a.article_type, a.status, a.featured,
-        a.author_name, a.author_role, a.author_avatar, a.published_at, a.updated_at,
-        a.read_time, a.image_url, a.image_caption, a.image_credit, a.content, a.key_takeaways,
-        a.pull_quote_text, a.pull_quote_attribution, a.sources, a.medical_reviewer,
-        a.is_blog_post, a.blog_series,
-      ]);
+      await insertArticle({ query }, a);
     }
     console.log('Database seeded:', data.articles?.length || 0, 'articles,', data.authors?.length || 0, 'authors');
   } else {
     console.log('Database already seeded, skipping articles/authors...');
+  }
+
+  if (data.archiveArticles?.length) {
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const applied = await client.query(
+        'INSERT INTO editorial_imports (id) VALUES ($1) ON CONFLICT DO NOTHING RETURNING id',
+        ['archive-2023-2025'],
+      );
+      if (applied.rowCount) {
+        for (const article of data.archiveArticles) {
+          await insertArticle(client, article);
+        }
+      }
+      await client.query('COMMIT');
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
   }
 
   // Always update brand_settings so banner/logo changes take effect on redeploy

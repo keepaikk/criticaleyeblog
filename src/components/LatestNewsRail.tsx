@@ -14,7 +14,7 @@ export const LatestNewsRail: React.FC<LatestNewsRailProps> = ({ articles, onSele
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900 dark:text-stone-100 flex items-center gap-2">
           <span className="w-2 h-2 bg-amber-800 dark:bg-amber-500 rounded-full" />
-          <span>Latest Healthcare Dispatches</span>
+          <span>Latest Stories</span>
         </h2>
         <span className="text-xs text-stone-500 dark:text-stone-400 font-medium">Real-Time Newsroom Wire</span>
       </div>

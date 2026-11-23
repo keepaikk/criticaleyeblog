@@ -1,3 +1,4 @@
+import { GENERAL_CATEGORIES } from '../types';
 import React from 'react';
 import { ShieldCheck, Rss } from 'lucide-react';
 
@@ -42,7 +43,7 @@ export const Footer: React.FC<FooterProps> = ({
   onNavigateCategory,
   onNavigateBlog,
 }) => {
-  const topics = ['Ghana Health', 'Public Health', 'Medical Research'];
+  const topics = [...GENERAL_CATEGORIES, 'Ghana Health', 'Public Health', 'Medical Research'];
 
   const legalLinks = [
     { id: 'about', label: 'About' },
@@ -67,7 +68,7 @@ export const Footer: React.FC<FooterProps> = ({
               </span>
             </div>
             <p className="text-stone-400 text-[11px] leading-relaxed">
-              Independent Ghanaian & African healthcare journalism committed to truth, evidence-based reporting, and accountability.
+              Independent Ghanaian and African reporting on politics, sports, entertainment, and health.
             </p>
           </div>
 

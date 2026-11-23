@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
 interface SectionHeaderProps {
-  number: string;
+  number?: string;
   title: string;
   subtitle?: string;
   onViewAll?: () => void;
@@ -19,9 +19,11 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   return (
     <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-stone-200 dark:border-stone-800 pb-3 mb-6 transition-colors">
       <div className="flex items-baseline gap-3">
-        <span className="text-xs font-mono font-semibold text-amber-900 dark:text-amber-400 tracking-wider">
-          {number}
-        </span>
+        {number && (
+          <span className="text-xs font-mono font-semibold text-amber-900 dark:text-amber-400 tracking-wider">
+            {number}
+          </span>
+        )}
         <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 dark:text-stone-100 tracking-tight">
           {title}
         </h2>

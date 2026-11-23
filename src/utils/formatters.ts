@@ -66,7 +66,7 @@ export function generateRssFeed(articles: Article[]): string {
   <channel>
     <title>Critical Eye Blog</title>
     <link>${siteUrl}</link>
-    <description>Ghanaian and African healthcare journalism with perspective and purpose.</description>
+    <description>Ghanaian and African reporting on politics, sports, entertainment, and health.</description>
     <language>en</language>
     <lastBuildDate>${now}</lastBuildDate>
     <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml" />
