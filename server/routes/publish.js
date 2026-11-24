@@ -1,5 +1,5 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
-import { Router, json } from 'express';
+import { Router, json, raw } from 'express';
 import { CATEGORIES } from '../categories.js';
 import { query } from '../db.js';
 
@@ -21,6 +21,63 @@ function requirePublisher(req, res, next) {
   }
   next();
 }
+
+const supportedImageTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/octet-stream'];
+const pngSignature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+
+function imageType(bytes) {
+  if (bytes.length >= 4 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return 'image/jpeg';
+  if (bytes.length >= 24 && bytes.subarray(0, 8).equals(pngSignature)
+    && bytes.toString('ascii', 12, 16) === 'IHDR') return 'image/png';
+  if (bytes.length >= 16 && bytes.toString('ascii', 0, 4) === 'RIFF'
+    && bytes.toString('ascii', 8, 12) === 'WEBP') return 'image/webp';
+}
+
+router.post('/images', requirePublisher, raw({ type: supportedImageTypes, limit: '8mb', inflate: false }), async (req, res) => {
+  const bytes = req.body;
+  const contentType = Buffer.isBuffer(bytes) && imageType(bytes);
+  if (!contentType || !req.is([contentType, 'application/octet-stream'])) {
+    return res.status(415).json({ error: 'Send raw JPEG, PNG, or WebP image bytes' });
+  }
+
+  const siteUrl = process.env.APP_URL?.replace(/\/+$/, '');
+  if (!siteUrl || !/^https:\/\/[^/?#]+$/i.test(siteUrl)) {
+    return res.status(503).json({ error: 'Set APP_URL to the public HTTPS website origin to enable image uploads' });
+  }
+
+  const id = digest(bytes).toString('hex');
+  try {
+    const result = await query(
+      'INSERT INTO social_images (id, content_type, bytes) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING',
+      [id, contentType, bytes]
+    );
+    return res.status(result.rowCount ? 201 : 200).json({
+      url: `${siteUrl}/api/publish/images/${id}`,
+      contentType,
+      size: bytes.length,
+    });
+  } catch (error) {
+    console.error('Social image upload failed:', error.code || error.name);
+    return res.status(500).json({ error: 'Failed to store image' });
+  }
+});
+
+router.get('/images/:id', async (req, res) => {
+  const { id } = req.params;
+  if (!/^[a-f0-9]{64}$/.test(id)) return res.sendStatus(404);
+  try {
+    const { rows: [image] } = await query('SELECT content_type, bytes FROM social_images WHERE id = $1', [id]);
+    if (!image) return res.sendStatus(404);
+    return res.set({
+      'Content-Type': image.content_type,
+      'X-Content-Type-Options': 'nosniff',
+      'Cache-Control': 'public, max-age=31536000, immutable',
+    }).send(image.bytes);
+  } catch (error) {
+    console.error('Social image retrieval failed:', error.code || error.name);
+    return res.sendStatus(500);
+  }
+});
 
 router.post('/', requirePublisher, json({ limit: '128kb' }), async (req, res) => {
   const idempotencyKey = req.get('Idempotency-Key');

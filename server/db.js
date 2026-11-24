@@ -53,6 +53,12 @@ export async function initDb() {
       article_id TEXT PRIMARY KEY
     );
 
+    CREATE TABLE IF NOT EXISTS social_images (
+      id TEXT PRIMARY KEY,
+      content_type TEXT NOT NULL,
+      bytes BYTEA NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS editorial_imports (
       id TEXT PRIMARY KEY
     );

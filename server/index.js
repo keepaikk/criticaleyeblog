@@ -25,9 +25,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// The publishing route authenticates before parsing its smaller request body.
+// Publishing routes authenticate before parsing article JSON or image bytes.
 app.use('/api/publish', publishRouter, (error, req, res, next) => {
-  if (error.type === 'entity.too.large') return res.status(413).json({ error: 'Article payload is too large' });
+  if (error.type === 'entity.too.large') return res.status(413).json({ error: 'Request payload is too large' });
+  if (error.type === 'encoding.unsupported') return res.status(415).json({ error: 'Unsupported request encoding' });
   if (error.type === 'entity.parse.failed') return res.status(400).json({ error: 'Invalid JSON' });
   next(error);
 });
