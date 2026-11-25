@@ -1306,7 +1306,7 @@ export const AdminCMS: React.FC<AdminCMSProps> = ({
                     type="text"
                     value={brandForm.tagline}
                     onChange={(e) => setBrandForm({ ...brandForm, tagline: e.target.value })}
-                    placeholder="Journalism with Perspective. Reporting with Purpose."
+                    placeholder="Reporting with Purpose."
                     className="w-full p-2 border border-stone-300 rounded text-xs focus:outline-none focus:border-amber-800"
                   />
                 </div>

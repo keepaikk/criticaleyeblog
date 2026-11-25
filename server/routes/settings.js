@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
       return res.json({
         logoUrl: '/images/critical_eye_facebook_profile.jpg',
         bannerUrl: '/images/criticaleye-banner-high-quality.jpeg',
-        tagline: 'Journalism with Perspective. Reporting with Purpose.',
+        tagline: 'Reporting with Purpose.',
         showBanner: true,
       });
     }

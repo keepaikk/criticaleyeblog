@@ -64,7 +64,7 @@ export const Footer: React.FC<FooterProps> = ({
                 CRITICAL EYE BLOG
               </span>
               <span className="text-amber-500 font-serif italic text-xs">
-                Journalism with Perspective. Reporting with Purpose.
+                Reporting with Purpose.
               </span>
             </div>
             <p className="text-stone-400 text-[11px] leading-relaxed">

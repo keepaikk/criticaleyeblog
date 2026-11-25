@@ -31,7 +31,7 @@ export function toggleBookmark(articleId: string): string[] {
 export const DEFAULT_BRAND_SETTINGS = {
   logoUrl: '/images/critical_eye_facebook_profile.jpg',
   bannerUrl: '/images/criticaleye-banner-high-quality.jpeg',
-  tagline: 'Journalism with Perspective. Reporting with Purpose.',
+  tagline: 'Reporting with Purpose.',
   showBanner: true,
 };
 
@@ -40,6 +40,9 @@ export function getBrandSettings() {
     const data = localStorage.getItem(BRAND_SETTINGS_KEY);
     if (data) {
       const parsed = JSON.parse(data);
+      if (parsed?.tagline === 'Journalism with Perspective. Reporting with Purpose.') {
+        parsed.tagline = DEFAULT_BRAND_SETTINGS.tagline;
+      }
       return { ...DEFAULT_BRAND_SETTINGS, ...parsed };
     }
   } catch (e) {

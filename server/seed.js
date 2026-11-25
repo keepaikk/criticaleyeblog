@@ -101,8 +101,12 @@ export async function seedDatabase() {
       show_banner = EXCLUDED.show_banner`, [
     '/images/critical_eye_facebook_profile.jpg',
     '/images/criticaleye-banner-high-quality.jpeg',
-    'Journalism with Perspective. Reporting with Purpose.',
+    'Reporting with Purpose.',
     true,
   ]);
+  await query(
+    'UPDATE brand_settings SET tagline = $1 WHERE id = 1 AND tagline = $2',
+    ['Reporting with Purpose.', 'Journalism with Perspective. Reporting with Purpose.'],
+  );
   console.log('Brand settings updated');
 }

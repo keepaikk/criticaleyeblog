@@ -91,7 +91,7 @@ export const StaticPages: React.FC<StaticPageProps> = ({ pageId, onNavigatePage,
               About Critical Eye
             </h1>
             <p className="text-lg font-serif italic text-stone-600 dark:text-stone-300">
-              Journalism with Perspective. Reporting with Purpose.
+              Reporting with Purpose.
             </p>
           </div>
 
