@@ -19,7 +19,7 @@ Send `POST <website URL>/api/publish` with these headers.
   "title": "What the weekend fixtures mean for local clubs",
   "deck": "A closer look at the teams and matches to watch.",
   "category": "Sports",
-  "articleType": "Analysis",
+  "articleType": "News",
   "author": "Critical Eye Editorial",
   "content": [
     "Put the opening paragraph here.",
@@ -31,6 +31,8 @@ Send `POST <website URL>/api/publish` with these headers.
 `title`, `deck`, `category`, and `content` are required. Use a category name from the website's newsroom editor. `articleType` defaults to `News`, and `author` defaults to `Critical Eye Editorial`. For an optional photo, pass a public HTTPS `imageUrl` with `imageCredit` and an optional `imageCaption`.
 
 A `201` response means the article was published. A `200` response returns the existing article for a retry. Both contain `id`, `slug`, `status`, and `url`. Handle `400` and `413` as input errors, `401` as an invalid publishing key, `409` as a message already tied to a withdrawn or deleted article, and `503` as a disabled integration.
+
+In n8n, use a separate HTTP Request node for the article. Set the body type to JSON and pass the article as an object. Use the binary body type only for the image upload. A `415` response from the article endpoint asks for JSON. If a `400` response includes a `fields` object, correct those fields and retry with the same idempotency key. Use `News` for a public post unless the approved draft specifies another public article type. Analysis entries are visible in the newsroom.
 
 ## Upload an approved Telegram photo
 

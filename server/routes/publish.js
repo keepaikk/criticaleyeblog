@@ -79,22 +79,45 @@ router.get('/images/:id', async (req, res) => {
   }
 });
 
-router.post('/', requirePublisher, json({ limit: '128kb' }), async (req, res) => {
+function requireArticleJson(req, res, next) {
   const idempotencyKey = req.get('Idempotency-Key');
   if (!idempotencyKey || !/^[A-Za-z0-9:_.=+\/-]{1,240}$/.test(idempotencyKey)) {
     return res.status(400).json({ error: 'Provide a stable Idempotency-Key of up to 240 characters' });
   }
 
-  const body = req.body ?? {};
+  if (!req.is('application/json')) {
+    return res.status(415).json({ error: 'Send the article as a JSON object with Content-Type: application/json' });
+  }
+  next();
+}
+
+router.post('/', requirePublisher, requireArticleJson, json({ limit: '128kb' }), async (req, res) => {
+  const idempotencyKey = req.get('Idempotency-Key');
+  const body = req.body;
+  if (!body || Array.isArray(body) || typeof body !== 'object') {
+    return res.status(400).json({ error: 'The article body must be a JSON object' });
+  }
+
   const title = cleanText(body.title, 200);
   const deck = cleanText(body.deck, 600);
-  const category = CATEGORIES.find((name) => name.toLowerCase() === cleanText(body.category, 80).toLowerCase());
-  const articleType = body.articleType ?? 'News';
+  const requestedCategory = cleanText(body.category, 80).toLowerCase();
+  const category = CATEGORIES.find((name) => name.toLowerCase() === requestedCategory);
+  const requestedType = cleanText(body.articleType ?? 'News', 20).toLowerCase();
+  const articleType = articleTypes.find((type) => type.toLowerCase() === requestedType);
   const content = Array.isArray(body.content) && body.content.length <= 80
     ? body.content.map((paragraph) => cleanText(paragraph, 8000))
     : [];
-  if (!title || !deck || !category || !articleTypes.includes(articleType) || !content.length || content.some((part) => !part)) {
-    return res.status(400).json({ error: 'Provide title, deck, a valid category and articleType, and a nonempty array of paragraphs' });
+
+  const fields = {};
+  if (!title) fields.title = 'Send the article title as text (1–200 characters)';
+  if (!deck) fields.deck = 'Send the article summary as text (1–600 characters)';
+  if (!category) fields.category = `Choose one of: ${CATEGORIES.join(', ')}`;
+  if (!articleType) fields.articleType = `Choose one of: ${articleTypes.join(', ')}`;
+  if (!content.length || content.some((part) => !part)) {
+    fields.content = 'Send an array of 1–80 paragraph strings, each 1–8000 characters';
+  }
+  if (Object.keys(fields).length) {
+    return res.status(400).json({ error: 'Invalid article fields', fields });
   }
 
   const imageUrl = cleanText(body.imageUrl, 2048);
