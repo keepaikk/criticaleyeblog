@@ -38,7 +38,6 @@ export const Header: React.FC<HeaderProps> = ({
     { label: 'Health', view: 'health' },
     { label: 'Blog', view: 'blog' },
     { label: 'Research & Innovation', view: 'category', param: 'Medical Research' },
-    { label: 'Analysis', view: 'category', param: 'Analysis' },
     { label: 'About', view: 'page', param: 'about' },
   ];
 

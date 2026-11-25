@@ -1,4 +1,4 @@
-import { articlePath } from './utils/formatters';
+import { articlePath, isPublicArticle } from './utils/formatters';
 import React, { useState, useEffect } from 'react';
 import { Article, Author, BrandSettings } from './types';
 import {
@@ -83,7 +83,7 @@ export default function App() {
         ]);
         setArticles(articlesData);
         const linkedArticle = articlesData.find((article) =>
-          article.status === 'Published' && window.location.pathname === articlePath(article.slug)
+          isPublicArticle(article) && window.location.pathname === articlePath(article.slug)
         );
         if (linkedArticle) {
           setSelectedArticle(linkedArticle);
@@ -112,7 +112,7 @@ export default function App() {
   useEffect(() => {
     const followHistory = () => {
       const path = window.location.pathname;
-      const article = articles.find((item) => item.status === 'Published' && path === articlePath(item.slug));
+      const article = articles.find((item) => isPublicArticle(item) && path === articlePath(item.slug));
       setSelectedArticle(article || null);
       setCurrentView(article ? 'article' : adminPath && path === adminPath ? 'admin' : 'home');
     };
@@ -233,7 +233,7 @@ export default function App() {
   const handleSelectArticle = (article: Article) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     const path = articlePath(article.slug);
-    if (article.status === 'Published' && window.location.pathname !== path) {
+    if (isPublicArticle(article) && window.location.pathname !== path) {
       window.history.pushState({}, '', path);
     }
     setSelectedArticle(article);
@@ -254,7 +254,7 @@ export default function App() {
 
   // Filter published articles
   const publishedArticles = articles
-    .filter((article) => article.status === 'Published')
+    .filter(isPublicArticle)
     .sort((a, b) => (Date.parse(b.publishedAt) || 0) - (Date.parse(a.publishedAt) || 0));
   const archiveYears = ['2025', '2024', '2023'].filter((year) =>
     publishedArticles.some((article) => article.publishedAt?.startsWith(year))
@@ -278,9 +278,6 @@ export default function App() {
   );
   const africaAndGlobalArticles = publishedArticles.filter(
     (a) => a.category === 'Africa Health' || a.category === 'Global Health'
-  );
-  const analysisAndInvestigations = publishedArticles.filter(
-    (a) => a.articleType === 'Analysis' || a.articleType === 'Investigation'
   );
   const blogArticles = publishedArticles.filter(
     (a) => a.isBlogPost || a.articleType === 'Opinion' || Boolean(a.blogSeries)
@@ -395,7 +392,6 @@ export default function App() {
               const categoryItems = publishedArticles.filter(
                 (a) =>
                   a.category === selectedCategory ||
-                  (selectedCategory === 'Analysis' && a.articleType === 'Analysis') ||
                   (selectedCategory === 'Medical Research' && (a.category === 'Medical Research' || a.category === 'Health Technology'))
               );
 
@@ -711,26 +707,6 @@ export default function App() {
                     key={art.id}
                     article={art}
                     variant="horizontal"
-                    onSelect={handleSelectArticle}
-                    isBookmarked={bookmarks.includes(art.id)}
-                    onToggleBookmark={handleToggleBookmarkArticle}
-                  />
-                ))}
-              </div>
-            </section>
-
-            <section className="mb-14">
-              <SectionHeader
-                number="08"
-                title="Analysis & Investigations"
-                subtitle="Deep Dives, Accountability Reporting & In-Depth Context"
-                onViewAll={() => handleNavigate('category', 'Analysis')}
-              />
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {analysisAndInvestigations.slice(0, 3).map((art) => (
-                  <ArticleCard
-                    key={art.id}
-                    article={art}
                     onSelect={handleSelectArticle}
                     isBookmarked={bookmarks.includes(art.id)}
                     onToggleBookmark={handleToggleBookmarkArticle}

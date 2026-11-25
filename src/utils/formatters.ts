@@ -8,6 +8,10 @@ const siteUrl =
 
 export const articlePath = (slug: string) => `/article/${encodeURIComponent(slug)}`;
 
+export function isPublicArticle(article: Article): boolean {
+  return article.status === 'Published' && article.articleType !== 'Analysis';
+}
+
 export function formatNewsDate(isoString: string): string {
   try {
     const d = new Date(isoString);
@@ -47,7 +51,7 @@ export function formatTimeAgo(isoString: string): string {
 export function generateRssFeed(articles: Article[]): string {
   const now = new Date().toUTCString();
   const items = articles
-    .filter((a) => a.status === 'Published')
+    .filter(isPublicArticle)
     .map((a) => {
       const pubDate = a.publishedAt ? new Date(a.publishedAt).toUTCString() : now;
       return `
@@ -80,7 +84,7 @@ export function generateRssFeed(articles: Article[]): string {
 export function generateSitemapXml(articles: Article[]): string {
   const now = new Date().toISOString();
   const articleUrls = articles
-    .filter((a) => a.status === 'Published')
+    .filter(isPublicArticle)
     .map(
       (a) =>
         `    <url>\n      <loc>${siteUrl}${articlePath(a.slug)}</loc>\n      <lastmod>${a.updatedAt || a.publishedAt || now}</lastmod>\n    </url>`
