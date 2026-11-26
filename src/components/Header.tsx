@@ -1,3 +1,4 @@
+import { ResponsiveImage } from './ResponsiveImage';
 import React, { useState } from 'react';
 import { Search, Menu, X, Bookmark, Sun, Moon, Sparkles, ChevronDown } from 'lucide-react';
 import { BrandSettings, GENERAL_CATEGORIES } from '../types';
@@ -203,8 +204,10 @@ export const Header: React.FC<HeaderProps> = ({
                 className="relative cursor-pointer group overflow-hidden rounded border border-stone-300/80 dark:border-stone-800 shadow-xs hover:border-amber-800 dark:hover:border-amber-500 transition-all bg-stone-900"
               >
                 <div className="relative aspect-[1024/180] overflow-hidden">
-                  <img
+                  <ResponsiveImage
                     src={brandSettings.bannerUrl}
+                    sizes="(min-width: 1024px) 576px, 100vw"
+                    loading="eager"
                     alt="Critical Eye Blog Official Banner"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover object-center"

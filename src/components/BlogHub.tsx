@@ -1,3 +1,4 @@
+import { ResponsiveImage } from './ResponsiveImage';
 import { articlePath } from '../utils/formatters';
 import React, { useState } from 'react';
 import { Article, BlogPitch } from '../types';
@@ -193,8 +194,11 @@ export const BlogHub: React.FC<BlogHubProps> = ({
                 onClick={() => onSelectArticle(featuredPost)}
                 className="lg:col-span-7 cursor-pointer group relative overflow-hidden aspect-16/10 lg:aspect-auto"
               >
-                <img
+                <ResponsiveImage
                   src={featuredPost.imageUrl}
+                  sizes="(min-width: 1024px) 700px, 100vw"
+                  loading="eager"
+                  fetchPriority="high"
                   alt={featuredPost.title}
                   className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700"
                 />
@@ -353,8 +357,9 @@ export const BlogHub: React.FC<BlogHubProps> = ({
                 <div>
                   {post.imageUrl && (
                     <div className="relative aspect-16/10 overflow-hidden bg-stone-100 dark:bg-stone-800">
-                      <img
+                      <ResponsiveImage
                         src={post.imageUrl}
+                        sizes="(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw"
                         alt={post.title}
                         className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
                       />

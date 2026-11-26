@@ -1,3 +1,4 @@
+import { ResponsiveImage } from './ResponsiveImage';
 import React from 'react';
 import { Article } from '../types';
 import { formatNewsDate } from '../utils/formatters';
@@ -26,8 +27,9 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
       >
         {article.imageUrl && (
           <div className="sm:col-span-4 aspect-16/10 sm:aspect-4/3 overflow-hidden rounded-sm bg-stone-200 dark:bg-stone-800 shrink-0">
-            <img
+            <ResponsiveImage
               src={article.imageUrl}
+              sizes="(min-width: 640px) 220px, 100vw"
               alt={article.title}
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -102,8 +104,9 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
       <div>
         {article.imageUrl && (
           <div className="aspect-16/10 overflow-hidden rounded-sm bg-stone-200 dark:bg-stone-800 mb-3">
-            <img
+            <ResponsiveImage
               src={article.imageUrl}
+              sizes="(min-width: 768px) 400px, 100vw"
               alt={article.title}
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

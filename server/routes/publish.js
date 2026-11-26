@@ -1,5 +1,6 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { Router, json, raw } from 'express';
+import sharp from 'sharp';
 import { CATEGORIES } from '../categories.js';
 import { query } from '../db.js';
 
@@ -65,13 +66,41 @@ router.post('/images', requirePublisher, raw({ type: supportedImageTypes, limit:
 router.get('/images/:id', async (req, res) => {
   const { id } = req.params;
   if (!/^[a-f0-9]{64}$/.test(id)) return res.sendStatus(404);
+  const width = req.query.w === '480' || req.query.w === '960' ? Number(req.query.w) : undefined;
+  const variantId = width && digest(`webp-v1:${id}:${width}`).toString('hex');
+
   try {
-    const { rows: [image] } = await query('SELECT content_type, bytes FROM social_images WHERE id = $1', [id]);
-    if (!image) return res.sendStatus(404);
+    const { rows: [stored] } = await query(
+      'SELECT id, content_type, bytes FROM social_images WHERE id = $1 OR id = $2 ORDER BY (id = $2) DESC LIMIT 1',
+      [id, variantId || null],
+    );
+    if (!stored) return res.sendStatus(404);
+
+    let image = stored;
+    let cacheControl = 'public, max-age=31536000, immutable';
+    if (variantId && stored.id === id) {
+      try {
+        const resized = await sharp(stored.bytes, { limitInputPixels: 25_000_000 })
+          .rotate()
+          .resize({ width, withoutEnlargement: true })
+          .webp({ quality: 78 })
+          .toBuffer();
+        if (resized.length < stored.bytes.length) {
+          image = { content_type: 'image/webp', bytes: resized };
+        }
+        await query(
+          'INSERT INTO social_images (id, content_type, bytes) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING',
+          [variantId, image.content_type, image.bytes],
+        );
+      } catch (error) {
+        console.warn('Social image optimization failed:', error.code || error.name);
+        cacheControl = 'public, max-age=300';
+      }
+    }
     return res.set({
       'Content-Type': image.content_type,
       'X-Content-Type-Options': 'nosniff',
-      'Cache-Control': 'public, max-age=31536000, immutable',
+      'Cache-Control': cacheControl,
     }).send(image.bytes);
   } catch (error) {
     console.error('Social image retrieval failed:', error.code || error.name);

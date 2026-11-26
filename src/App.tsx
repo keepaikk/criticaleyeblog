@@ -1,3 +1,4 @@
+import { ResponsiveImage } from './components/ResponsiveImage';
 import { articlePath, isPublicArticle } from './utils/formatters';
 import React, { useState, useEffect } from 'react';
 import { Article, Author, BrandSettings } from './types';
@@ -639,8 +640,9 @@ export default function App() {
                     <div>
                       {art.imageUrl && (
                         <div className="aspect-16/10 relative overflow-hidden bg-stone-100 dark:bg-stone-800">
-                          <img
+                          <ResponsiveImage
                             src={art.imageUrl}
+                            sizes="(min-width: 768px) 400px, 100vw"
                             alt={art.title}
                             className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
                           />

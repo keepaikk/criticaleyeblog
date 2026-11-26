@@ -1,3 +1,4 @@
+import { ResponsiveImage } from './ResponsiveImage';
 import { EDITORIAL_PHOTO_LIBRARY } from '../data/editorialPhotos';
 import React, { useState, useEffect } from 'react';
 import { Article, GENERAL_CATEGORIES } from '../types';
@@ -268,8 +269,11 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
       {article.imageUrl && (
         <figure className="mb-8">
           <div className="relative aspect-16/9 overflow-hidden rounded-sm bg-stone-200 dark:bg-stone-800">
-            <img
+            <ResponsiveImage
               src={article.imageUrl}
+              sizes="(min-width: 896px) 850px, 100vw"
+              loading="eager"
+              fetchPriority="high"
               alt={article.title}
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover"
@@ -459,8 +463,9 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({
                 <div>
                   {rel.imageUrl && (
                     <div className="aspect-16/10 overflow-hidden rounded-sm bg-stone-200 dark:bg-stone-800 mb-2">
-                      <img
+                      <ResponsiveImage
                         src={rel.imageUrl}
+                        sizes="(min-width: 768px) 270px, 100vw"
                         alt={rel.title}
                         referrerPolicy="no-referrer"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

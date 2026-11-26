@@ -1,3 +1,4 @@
+import { ResponsiveImage } from './ResponsiveImage';
 import React from 'react';
 import { Article } from '../types';
 import { formatNewsDate } from '../utils/formatters';
@@ -50,8 +51,11 @@ export const FeaturedLead: React.FC<FeaturedLeadProps> = ({
             onClick={() => onSelect(article)}
           >
             <div className="relative aspect-16/9 overflow-hidden">
-              <img
+              <ResponsiveImage
                 src={article.imageUrl}
+                sizes="(min-width: 1024px) 700px, 100vw"
+                loading="eager"
+                fetchPriority="high"
                 alt={article.title}
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
